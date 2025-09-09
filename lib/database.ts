@@ -17,20 +17,33 @@ export class LocalDatabase {
   async initialize() {
     if (this.initialized) return;
 
+    console.log('=== DATABASE INITIALIZATION START ===');
+    
     try {
       const savedData = await AsyncStorage.getItem('hotel_database');
       if (savedData) {
         this.data = JSON.parse(savedData);
-        console.log('Database loaded from storage');
+        console.log('✅ Database loaded from AsyncStorage');
+        console.log('Loaded data summary:', {
+          profiles: this.data.profiles?.length || 0,
+          rooms: this.data.rooms?.length || 0,
+          bookings: this.data.bookings?.length || 0,
+          menu_items: this.data.menu_items?.length || 0,
+          inventory: this.data.inventory?.length || 0,
+        });
       } else {
+        console.log('No existing data found, creating new database...');
         await this.createDefaultSchema();
-        console.log('New database created with sample data');
+        console.log('✅ New database created with sample data');
       }
       this.initialized = true;
+      console.log('✅ Database initialization complete');
+      console.log('=== DATABASE INITIALIZATION COMPLETE ===');
     } catch (error) {
-      console.error('Failed to initialize database:', error);
+      console.error('❌ Failed to initialize database:', error);
       await this.createDefaultSchema();
       this.initialized = true;
+      console.log('✅ Fallback database created');
     }
   }
 

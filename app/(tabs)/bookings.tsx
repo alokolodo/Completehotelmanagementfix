@@ -48,6 +48,7 @@ export default function Bookings() {
   });
 
   useEffect(() => {
+    console.log('Bookings component mounted, loading data...');
     loadData();
   }, []);
 
