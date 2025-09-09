@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '@/lib/database';
 import { DatePicker } from '@/components/DatePicker';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { ChartBar as BarChart, TrendingUp, TrendingDown, DollarSign, Users, Bed, Calendar, ChefHat, Wine, Building } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
@@ -480,6 +481,18 @@ export default function Analytics() {
         {/* Financial Summary */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Financial Summary</Text>
+          
+          {/* Template Download Section */}
+          <View style={styles.templateSection}>
+            <Text style={styles.templateSectionTitle}>📊 Export Templates</Text>
+            <ExcelTemplateDownloader
+              templateType="all"
+              onDownloadComplete={() => {
+                Alert.alert('Success', 'Complete system template downloaded! This includes all data types for comprehensive analysis.');
+              }}
+            />
+          </View>
+          
           <View style={styles.financialSummary}>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Total Revenue</Text>
@@ -874,5 +887,17 @@ const styles = StyleSheet.create({
   summaryTotalValue: {
     fontSize: 18,
     fontFamily: 'Inter-Bold',
+  },
+  templateSection: {
+    backgroundColor: '#f8fafc',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  templateSectionTitle: {
+    fontSize: 16,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 12,
   },
 });

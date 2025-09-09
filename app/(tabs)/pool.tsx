@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/database';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { Waves, Thermometer, Users, Clock, TriangleAlert as AlertTriangle } from 'lucide-react-native';
 
 type Order = Database['public']['Tables']['orders']['Row'];
@@ -568,5 +569,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: '#64748b',
     marginBottom: 6,
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
 });

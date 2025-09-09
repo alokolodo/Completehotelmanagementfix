@@ -15,6 +15,7 @@ import { db } from '@/lib/database';
 import { Database } from '@/types/database';
 import { BookingConfirmation } from '@/components/BookingConfirmation';
 import { DatePicker } from '@/components/DatePicker';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { Calendar, Search, Plus, User, MapPin, CreditCard, Clock, Phone, Mail, Filter } from 'lucide-react-native';
 
 type Booking = Database['public']['Tables']['bookings']['Row'];

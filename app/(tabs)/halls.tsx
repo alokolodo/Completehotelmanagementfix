@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
 import { DatePicker } from '@/components/DatePicker';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { Building, Plus, Search, Calendar, Users, DollarSign, Clock, MapPin } from 'lucide-react-native';
 
 type Hall = Database['public']['Tables']['halls']['Row'];

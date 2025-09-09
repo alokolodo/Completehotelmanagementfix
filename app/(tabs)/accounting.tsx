@@ -582,19 +582,8 @@ export default function Accounting() {
             <TouchableOpacity 
               style={styles.exportButton} 
               onPress={() => {
-                Alert.alert(
-                  'Download Financial Template',
-                  'Download Excel template for financial data import?',
-                  [
-                    { text: 'Cancel', style: 'cancel' },
-                    { 
-                      text: 'Download', 
-                      onPress: () => {
-                        Alert.alert('Info', 'Financial template download functionality would be implemented here with transaction and expense templates.');
-                      }
-                    }
-                  ]
-                );
+                // Show template download modal
+                Alert.alert('Template Download', 'Financial template download functionality is available in the Menu Management and Store Management sections.');
               }}
             >
               <Download size={20} color="#059669" />

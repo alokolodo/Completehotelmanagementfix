@@ -285,20 +285,6 @@ export default function MenuManagement() {
                 <Text style={styles.importButtonText}>📊</Text>
               </LinearGradient>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.templateButton}
-              onPress={() => {
-                // Template download is handled by ExcelTemplateDownloader component
-                console.log('Template download handled by component');
-              }}
-            >
-              <LinearGradient
-                colors={['#059669', '#047857']}
-                style={styles.addButtonGradient}
-              >
-                <Download size={20} color="white" />
-              </LinearGradient>
-            </TouchableOpacity>
           </View>
         </View>
       </LinearGradient>

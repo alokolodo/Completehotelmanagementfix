@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { DatePicker } from '@/components/DatePicker';
 import { Wrench, Plus, Search, TriangleAlert as AlertTriangle, Clock, DollarSign, User, MapPin } from 'lucide-react-native';
 
@@ -254,6 +255,17 @@ export default function Maintenance() {
           <Text style={styles.statNumber}>{requests.filter(r => r.status === 'completed').length}</Text>
           <Text style={styles.statLabel}>Completed</Text>
         </View>
+      </View>
+
+      {/* Template Download Section */}
+      <View style={styles.templateSection}>
+        <Text style={styles.templateSectionTitle}>📊 Maintenance Templates</Text>
+        <ExcelTemplateDownloader
+          templateType="all"
+          onDownloadComplete={() => {
+            Alert.alert('Success', 'Maintenance management template downloaded! This includes templates for maintenance requests and tracking.');
+          }}
+        />
       </View>
 
       {/* Search and Filters */}
@@ -1231,5 +1243,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
 });

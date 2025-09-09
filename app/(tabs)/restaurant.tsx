@@ -759,4 +759,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Bold',
     color: '#fff',
   },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
+  },
 });

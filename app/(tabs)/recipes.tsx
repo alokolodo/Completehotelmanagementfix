@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { DatePicker } from '@/components/DatePicker';
 import { BookOpen, Plus, Search, Clock, Users, ChefHat, Star } from 'lucide-react-native';
 
@@ -171,6 +172,17 @@ export default function Recipes() {
         >
           <Plus size={20} color="white" />
         </TouchableOpacity>
+      </View>
+
+      {/* Template Download Section */}
+      <View style={styles.templateSection}>
+        <Text style={styles.templateSectionTitle}>📊 Recipe Templates</Text>
+        <ExcelTemplateDownloader
+          templateType="menu"
+          onDownloadComplete={() => {
+            Alert.alert('Success', 'Recipe template downloaded! Use this to import recipes and menu items in bulk.');
+          }}
+        />
       </View>
 
       {/* Search and Filters */}
@@ -976,5 +988,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
 });
