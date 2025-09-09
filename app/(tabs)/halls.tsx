@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
+import { DatePicker } from '@/components/DatePicker';
 import { Building, Plus, Search, Calendar, Users, DollarSign, Clock, MapPin } from 'lucide-react-native';
 
 type Hall = Database['public']['Tables']['halls']['Row'];
@@ -422,6 +423,17 @@ export default function Halls() {
             </View>
 
             <ScrollView style={styles.modalBody}>
+              {/* Excel Template Download Section */}
+              <View style={styles.templateSection}>
+                <Text style={styles.templateSectionTitle}>📊 Excel Templates</Text>
+                <ExcelTemplateDownloader
+                  templateType="all"
+                  onDownloadComplete={() => {
+                    Alert.alert('Success', 'Complete template downloaded! This includes halls, bookings, and event management data.');
+                  }}
+                />
+              </View>
+
               <View style={styles.formGroup}>
                 <Text style={styles.formLabel}>Hall *</Text>
                 <ScrollView horizontal style={styles.hallSelector}>
@@ -491,22 +503,46 @@ export default function Halls() {
 
               <View style={styles.formRow}>
                 <View style={styles.formGroup}>
-                  <Text style={styles.formLabel}>Start Date & Time *</Text>
+                  <DatePicker
+                    label="Start Date *"
+                    value={newBooking.start_datetime.split(' ')[0] || ''}
+                    onDateChange={(date) => {
+                      const time = newBooking.start_datetime.split(' ')[1] || '09:00';
+                      setNewBooking({ ...newBooking, start_datetime: `${date} ${time}` });
+                    }}
+                    placeholder="Select start date"
+                    minimumDate={new Date().toISOString().split('T')[0]}
+                  />
                   <TextInput
-                    style={styles.formInput}
-                    value={newBooking.start_datetime}
-                    onChangeText={(text) => setNewBooking({ ...newBooking, start_datetime: text })}
-                    placeholder="YYYY-MM-DD HH:MM"
+                    style={styles.timeInput}
+                    value={newBooking.start_datetime.split(' ')[1] || ''}
+                    onChangeText={(time) => {
+                      const date = newBooking.start_datetime.split(' ')[0] || '';
+                      setNewBooking({ ...newBooking, start_datetime: `${date} ${time}` });
+                    }}
+                    placeholder="HH:MM"
                   />
                 </View>
 
                 <View style={styles.formGroup}>
-                  <Text style={styles.formLabel}>End Date & Time *</Text>
+                  <DatePicker
+                    label="End Date *"
+                    value={newBooking.end_datetime.split(' ')[0] || ''}
+                    onDateChange={(date) => {
+                      const time = newBooking.end_datetime.split(' ')[1] || '17:00';
+                      setNewBooking({ ...newBooking, end_datetime: `${date} ${time}` });
+                    }}
+                    placeholder="Select end date"
+                    minimumDate={newBooking.start_datetime.split(' ')[0] || new Date().toISOString().split('T')[0]}
+                  />
                   <TextInput
-                    style={styles.formInput}
-                    value={newBooking.end_datetime}
-                    onChangeText={(text) => setNewBooking({ ...newBooking, end_datetime: text })}
-                    placeholder="YYYY-MM-DD HH:MM"
+                    style={styles.timeInput}
+                    value={newBooking.end_datetime.split(' ')[1] || ''}
+                    onChangeText={(time) => {
+                      const date = newBooking.end_datetime.split(' ')[0] || '';
+                      setNewBooking({ ...newBooking, end_datetime: `${date} ${time}` });
+                    }}
+                    placeholder="HH:MM"
                   />
                 </View>
               </View>
@@ -949,5 +985,27 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
+  },
+  templateSection: {
+    backgroundColor: '#f8fafc',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  templateSectionTitle: {
+    fontSize: 16,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 12,
+  },
+  timeInput: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    backgroundColor: '#fafafa',
+    marginTop: 8,
   },
 });

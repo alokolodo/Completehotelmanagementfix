@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
+import { DatePicker } from '@/components/DatePicker';
 import { BookOpen, Plus, Search, Clock, Users, ChefHat, Star } from 'lucide-react-native';
 
 type Recipe = Database['public']['Tables']['recipes']['Row'];

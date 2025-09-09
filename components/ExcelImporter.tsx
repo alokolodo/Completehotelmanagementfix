@@ -12,6 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import * as DocumentPicker from 'expo-document-picker';
 import * as XLSX from 'xlsx';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
 import { Upload, FileSpreadsheet, Download, CircleCheck as CheckCircle, CircleAlert as AlertCircle, FileText } from 'lucide-react-native';
@@ -36,111 +37,8 @@ export function ExcelImporter({ visible, onClose, importType, onImportComplete }
   } | null>(null);
 
   const downloadTemplate = () => {
-    const templates = {
-      menu: {
-        name: 'Menu_Template.xlsx',
-        description: 'Template for importing menu items (foods and drinks)',
-        columns: [
-          'name', 'description', 'category', 'subcategory', 'price', 'cost_price',
-          'ingredients', 'allergens', 'prep_time_minutes', 'cooking_time_minutes',
-          'difficulty_level', 'is_vegetarian', 'is_vegan', 'is_gluten_free', 'calories'
-        ],
-        sampleData: [
-          {
-            name: 'Grilled Salmon',
-            description: 'Fresh Atlantic salmon with lemon herb butter',
-            category: 'main_course',
-            subcategory: 'seafood',
-            price: 28.99,
-            cost_price: 15.50,
-            ingredients: 'salmon fillet, lemon, herbs, butter, vegetables',
-            allergens: 'fish',
-            prep_time_minutes: 15,
-            cooking_time_minutes: 20,
-            difficulty_level: 'medium',
-            is_vegetarian: false,
-            is_vegan: false,
-            is_gluten_free: true,
-            calories: 450
-          },
-          {
-            name: 'Classic Mojito',
-            description: 'Refreshing Cuban cocktail with mint and lime',
-            category: 'cocktail',
-            subcategory: 'rum_based',
-            price: 12.00,
-            cost_price: 4.50,
-            ingredients: 'white rum, mint leaves, lime juice, sugar, soda water',
-            allergens: '',
-            prep_time_minutes: 5,
-            cooking_time_minutes: 0,
-            difficulty_level: 'easy',
-            is_vegetarian: true,
-            is_vegan: true,
-            is_gluten_free: true,
-            calories: 150
-          }
-        ]
-      },
-      inventory: {
-        name: 'Inventory_Template.xlsx',
-        description: 'Template for importing inventory items (kitchen and bar)',
-        columns: [
-          'item_name', 'category', 'subcategory', 'current_stock', 'minimum_stock',
-          'maximum_stock', 'unit', 'unit_cost', 'supplier', 'supplier_contact',
-          'storage_location', 'expiry_date', 'is_perishable', 'barcode'
-        ],
-        sampleData: [
-          {
-            item_name: 'Salmon Fillets',
-            category: 'food',
-            subcategory: 'seafood',
-            current_stock: 25,
-            minimum_stock: 10,
-            maximum_stock: 50,
-            unit: 'pieces',
-            unit_cost: 15.99,
-            supplier: 'Ocean Fresh Seafood',
-            supplier_contact: '+1-555-0101',
-            storage_location: 'Walk-in Freezer A',
-            expiry_date: '2024-02-15',
-            is_perishable: true,
-            barcode: '1234567890123'
-          },
-          {
-            item_name: 'White Rum',
-            category: 'alcohol',
-            subcategory: 'spirits',
-            current_stock: 12,
-            minimum_stock: 5,
-            maximum_stock: 30,
-            unit: 'bottles',
-            unit_cost: 25.00,
-            supplier: 'Premium Spirits Co',
-            supplier_contact: '+1-555-0104',
-            storage_location: 'Bar Storage',
-            expiry_date: '',
-            is_perishable: false,
-            barcode: '9876543210987'
-          }
-        ]
-      }
-    };
-
-    const template = templates[importType as keyof typeof templates];
-    if (template) {
-      Alert.alert(
-        `${template.name}`,
-        `${template.description}\n\nColumns: ${template.columns.join(', ')}\n\nIn a real implementation, this would download an Excel file with these columns and sample data.`,
-        [{ text: 'OK' }]
-      );
-    } else {
-      Alert.alert(
-        'Multiple Templates',
-        'This would download both Menu and Inventory templates as separate sheets in one Excel file.',
-        [{ text: 'OK' }]
-      );
-    }
+    // This function is now handled by ExcelTemplateDownloader component
+    console.log('Template download handled by ExcelTemplateDownloader component');
   };
 
   const pickAndImportFile = async () => {
@@ -452,15 +350,12 @@ export function ExcelImporter({ visible, onClose, importType, onImportComplete }
                     Download the Excel template with the correct column format and sample data.
                   </Text>
                   
-                  <TouchableOpacity style={styles.downloadButton} onPress={downloadTemplate}>
-                    <LinearGradient
-                      colors={['#f1f5f9', '#e2e8f0']}
-                      style={styles.downloadButtonGradient}
-                    >
-                      <FileSpreadsheet size={20} color="#1e3a8a" />
-                      <Text style={styles.downloadButtonText}>Download Excel Template</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
+                  <ExcelTemplateDownloader
+                    templateType={importType}
+                    onDownloadComplete={() => {
+                      console.log('Template downloaded successfully');
+                    }}
+                  />
                 </View>
 
                 {/* Instructions Section */}
@@ -506,9 +401,21 @@ export function ExcelImporter({ visible, onClose, importType, onImportComplete }
                       <Text style={styles.tipText}>• Units: pieces, kg, liters, bottles, boxes, etc.</Text>
                       <Text style={styles.tipText}>• Expiry dates: Use YYYY-MM-DD format</Text>
                       <Text style={styles.tipText}>• Storage locations: Kitchen Pantry, Bar Storage, Walk-in Cooler, etc.</Text>
+                      <Text style={styles.tipText}>• Boolean fields: Use true/false for is_perishable</Text>
+                      <Text style={styles.tipText}>• Required fields: item_name, category, unit_cost, supplier</Text>
                     </View>
                   )}
                 </View>
+
+                {importType === 'all' && (
+                  <View style={styles.tipBox}>
+                    <Text style={styles.tipTitle}>📊 Complete Import Tips:</Text>
+                    <Text style={styles.tipText}>• Use separate sheets for different data types</Text>
+                    <Text style={styles.tipText}>• Follow the sample data format exactly</Text>
+                    <Text style={styles.tipText}>• Import sheets one at a time for better error tracking</Text>
+                    <Text style={styles.tipText}>• Verify data before importing large datasets</Text>
+                  </View>
+                )}
 
                 {/* Import Section */}
                 <View style={styles.section}>

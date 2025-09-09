@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
+import { DatePicker } from '@/components/DatePicker';
 import { Wrench, Plus, Search, TriangleAlert as AlertTriangle, Clock, DollarSign, User, MapPin } from 'lucide-react-native';
 
 type MaintenanceRequest = Database['public']['Tables']['maintenance_requests']['Row'];
@@ -640,6 +641,19 @@ export default function Maintenance() {
                     ))}
                   </ScrollView>
                 </View>
+              </View>
+
+              <View style={styles.formGroup}>
+                <DatePicker
+                  label="Estimated Completion Date"
+                  value={newRequest.estimated_completion?.split('T')[0] || ''}
+                  onDateChange={(date) => setNewRequest({ 
+                    ...newRequest, 
+                    estimated_completion: date ? new Date(date).toISOString() : undefined 
+                  })}
+                  placeholder="Select target completion date"
+                  minimumDate={new Date().toISOString().split('T')[0]}
+                />
               </View>
 
               <View style={styles.formGroup}>

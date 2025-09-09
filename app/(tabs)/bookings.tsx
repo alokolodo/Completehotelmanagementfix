@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
 import { BookingConfirmation } from '@/components/BookingConfirmation';
+import { DatePicker } from '@/components/DatePicker';
 import { Calendar, Search, Plus, User, MapPin, CreditCard, Clock, Phone, Mail, Filter } from 'lucide-react-native';
 
 type Booking = Database['public']['Tables']['bookings']['Row'];
@@ -572,6 +573,17 @@ export default function Bookings() {
               </TouchableOpacity>
             </View>
 
+            {/* Excel Template Download Section */}
+            <View style={styles.templateSection}>
+              <Text style={styles.templateSectionTitle}>📊 Excel Templates</Text>
+              <ExcelTemplateDownloader
+                templateType="bookings"
+                onDownloadComplete={() => {
+                  Alert.alert('Success', 'Bookings template downloaded! Fill in your data and use the import function.');
+                }}
+              />
+            </View>
+
             <ScrollView style={styles.modalBody}>
               <View style={styles.formGroup}>
                 <Text style={styles.formLabel}>Guest Name *</Text>
@@ -632,22 +644,22 @@ export default function Bookings() {
 
               <View style={styles.formRow}>
                 <View style={styles.formGroup}>
-                  <Text style={styles.formLabel}>Check-in Date *</Text>
-                  <TextInput
-                    style={styles.formInput}
+                  <DatePicker
+                    label="Check-in Date *"
                     value={newBooking.check_in}
-                    onChangeText={(text) => setNewBooking({ ...newBooking, check_in: text })}
-                    placeholder={new Date().toISOString().split('T')[0]}
+                    onDateChange={(date) => setNewBooking({ ...newBooking, check_in: date })}
+                    placeholder="Select check-in date"
+                    minimumDate={new Date().toISOString().split('T')[0]}
                   />
                 </View>
 
                 <View style={styles.formGroup}>
-                  <Text style={styles.formLabel}>Check-out Date *</Text>
-                  <TextInput
-                    style={styles.formInput}
+                  <DatePicker
+                    label="Check-out Date *"
                     value={newBooking.check_out}
-                    onChangeText={(text) => setNewBooking({ ...newBooking, check_out: text })}
-                    placeholder={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                    onDateChange={(date) => setNewBooking({ ...newBooking, check_out: date })}
+                    placeholder="Select check-out date"
+                    minimumDate={newBooking.check_in || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
                   />
                 </View>
               </View>
@@ -1113,5 +1125,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: '#94a3b8',
     marginTop: 2,
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
 });

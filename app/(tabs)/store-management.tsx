@@ -17,7 +17,8 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
 import { ExcelImporter } from '@/components/ExcelImporter';
-import { Package, Plus, Search, TrendingUp, TrendingDown, ChefHat, Wine, TriangleAlert as AlertTriangle } from 'lucide-react-native';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
+import { Package, Plus, Search, TrendingUp, TrendingDown, ChefHat, Wine, TriangleAlert as AlertTriangle, Download } from 'lucide-react-native';
 
 type InventoryItem = Database['public']['Tables']['inventory']['Row'];
 
@@ -293,6 +294,17 @@ export default function StoreManagement() {
           </Text>
           <Text style={styles.statLabel}>Total Value</Text>
         </LinearGradient>
+      </View>
+
+      {/* Template Download Section */}
+      <View style={styles.templateSection}>
+        <Text style={styles.templateSectionTitle}>📊 Excel Templates</Text>
+        <ExcelTemplateDownloader
+          templateType="inventory"
+          onDownloadComplete={() => {
+            Alert.alert('Success', 'Store management template downloaded! Fill in your data and use the import function.');
+          }}
+        />
       </View>
 
       {/* Search and Store Filter */}
@@ -1182,5 +1194,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
 });

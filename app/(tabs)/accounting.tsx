@@ -14,7 +14,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/database';
-import { Calculator, DollarSign, TrendingUp, TrendingDown, Calendar, FileText, CreditCard, ChartPie as PieChart, Star, Sparkles, ChefHat, Wine } from 'lucide-react-native';
+import { DatePicker } from '@/components/DatePicker';
+import { Calculator, DollarSign, TrendingUp, TrendingDown, Calendar, FileText, CreditCard, ChartPie as PieChart, Star, Sparkles, ChefHat, Wine, Download } from 'lucide-react-native';
 
 type Booking = Database['public']['Tables']['bookings']['Row'];
 type Order = Database['public']['Tables']['orders']['Row'];
@@ -576,6 +577,28 @@ export default function Accounting() {
             <TouchableOpacity style={styles.exportButton} onPress={generateReport}>
               <FileText size={20} color="#1e3a8a" />
               <Text style={styles.exportButtonText}>Financial Report (PDF)</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.exportButton} 
+              onPress={() => {
+                Alert.alert(
+                  'Download Financial Template',
+                  'Download Excel template for financial data import?',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    { 
+                      text: 'Download', 
+                      onPress: () => {
+                        Alert.alert('Info', 'Financial template download functionality would be implemented here with transaction and expense templates.');
+                      }
+                    }
+                  ]
+                );
+              }}
+            >
+              <Download size={20} color="#059669" />
+              <Text style={styles.exportButtonText}>Download Templates</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.exportButton} onPress={generateReport}>

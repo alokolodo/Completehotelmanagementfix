@@ -71,8 +71,18 @@ export default function Settings() {
     ]).start();
   }, []);
 
-  const handleSaveSettings = () => {
-    Alert.alert('Success', 'Settings saved successfully');
+  const handleSaveSettings = async () => {
+    // Update hotel name in the system
+    if (hotelSettings.hotelName) {
+      const saved = await saveHotelSettings();
+      if (saved) {
+        Alert.alert('Success', 'Settings saved successfully. Changes will be reflected across the system.');
+      } else {
+        Alert.alert('Error', 'Failed to save settings. Please try again.');
+      }
+    } else {
+      Alert.alert('Error', 'Hotel name cannot be empty');
+    }
   };
 
   const handleSignOut = async () => {
