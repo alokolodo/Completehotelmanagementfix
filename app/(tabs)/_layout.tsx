@@ -1,7 +1,8 @@
 import { Tabs } from 'expo-router';
 import { useRouter, usePathname } from 'expo-router';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useEffect, useState } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { 
@@ -209,7 +210,12 @@ export default function TabLayout() {
           <View style={styles.sidebarFooter}>
             <TouchableOpacity 
               style={styles.signOutButton}
-              onPress={signOut}
+              onPress={async () => {
+                const result = await signOut();
+                if (!result.error) {
+                  router.replace('/auth');
+                }
+              }}
             >
               <LogOut size={18} color="#ef4444" />
               <Text style={styles.signOutText}>Sign Out</Text>
