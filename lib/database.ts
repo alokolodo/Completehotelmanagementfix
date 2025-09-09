@@ -464,9 +464,12 @@ export class LocalDatabase {
 
   async save() {
     try {
+      console.log('Saving database to AsyncStorage...');
       await AsyncStorage.setItem('hotel_database', JSON.stringify(this.data));
+      console.log('Database saved successfully');
     } catch (error) {
       console.error('Failed to save database:', error);
+      throw new Error(`Database save failed: ${error.message}`);
     }
   }
 
@@ -497,6 +500,8 @@ export class LocalDatabase {
   async insert<T>(table: string, data: Omit<T, 'id' | 'created_at' | 'updated_at'>): Promise<T> {
     await this.initialize();
     
+    console.log(`Inserting into ${table}:`, data);
+    
     const newItem = {
       ...data,
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -509,6 +514,10 @@ export class LocalDatabase {
     }
     
     this.data[table].push(newItem);
+    
+    console.log(`Inserted item with ID: ${(newItem as any).id}`);
+    console.log(`Table ${table} now has ${this.data[table].length} items`);
+    
     await this.save();
     
     return newItem;
@@ -517,10 +526,15 @@ export class LocalDatabase {
   async update<T>(table: string, id: string, updates: Partial<T>): Promise<T | null> {
     await this.initialize();
     
+    console.log(`Updating ${table} item ${id}:`, updates);
+    
     const items = this.data[table] || [];
     const index = items.findIndex(item => item.id === id);
     
-    if (index === -1) return null;
+    if (index === -1) {
+      console.error(`Item with ID ${id} not found in table ${table}`);
+      return null;
+    }
     
     const updatedItem = {
       ...items[index],
@@ -529,6 +543,9 @@ export class LocalDatabase {
     };
     
     this.data[table][index] = updatedItem;
+    
+    console.log(`Updated item:`, updatedItem);
+    
     await this.save();
     
     return updatedItem;
