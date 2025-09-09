@@ -71,6 +71,43 @@ export default function Bookings() {
       return;
     }
 
+    // Validate dates
+    const checkInDate = new Date(newBooking.check_in);
+    const checkOutDate = new Date(newBooking.check_out);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
+      Alert.alert('Error', 'Please enter valid dates in YYYY-MM-DD format');
+      return;
+    }
+
+    if (checkInDate < today) {
+      Alert.alert('Error', 'Check-in date cannot be in the past');
+      return;
+    }
+
+    if (checkOutDate <= checkInDate) {
+      Alert.alert('Error', 'Check-out date must be after check-in date');
+      return;
+    }
+
+    // Calculate total amount if not provided
+    if (newBooking.total_amount === 0) {
+      const selectedRoom = rooms.find(r => r.id === newBooking.room_id);
+      if (selectedRoom) {
+        const nights = calculateNights(newBooking.check_in, newBooking.check_out);
+        const calculatedAmount = selectedRoom.price_per_night * nights;
+        setNewBooking({ ...newBooking, total_amount: calculatedAmount });
+        Alert.alert(
+          'Auto-calculated Total',
+          `Total amount calculated as $${calculatedAmount} for ${nights} night${nights !== 1 ? 's' : ''}. Please confirm or adjust.`,
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+    }
+
     try {
       const booking = await db.insert<Booking>('bookings', {
         ...newBooking,
@@ -509,7 +546,7 @@ export default function Bookings() {
                     style={styles.formInput}
                     value={newBooking.check_in}
                     onChangeText={(text) => setNewBooking({ ...newBooking, check_in: text })}
-                    placeholder="YYYY-MM-DD"
+                    placeholder={new Date().toISOString().split('T')[0]}
                   />
                 </View>
 
@@ -519,7 +556,7 @@ export default function Bookings() {
                     style={styles.formInput}
                     value={newBooking.check_out}
                     onChangeText={(text) => setNewBooking({ ...newBooking, check_out: text })}
-                    placeholder="YYYY-MM-DD"
+                    placeholder={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
                   />
                 </View>
               </View>
@@ -550,6 +587,7 @@ export default function Bookings() {
 
               <View style={styles.formGroup}>
                 <Text style={styles.formLabel}>Total Amount</Text>
+                <View style={styles.totalAmountContainer}>
                 <TextInput
                   style={styles.formInput}
                   value={newBooking.total_amount.toString()}
@@ -557,6 +595,24 @@ export default function Bookings() {
                   placeholder="Enter total amount"
                   keyboardType="numeric"
                 />
+                  <TouchableOpacity
+                    style={styles.calculateButton}
+                    onPress={() => {
+                      if (newBooking.room_id && newBooking.check_in && newBooking.check_out) {
+                        const selectedRoom = rooms.find(r => r.id === newBooking.room_id);
+                        if (selectedRoom) {
+                          const nights = calculateNights(newBooking.check_in, newBooking.check_out);
+                          const calculatedAmount = selectedRoom.price_per_night * nights;
+                          setNewBooking({ ...newBooking, total_amount: calculatedAmount });
+                        }
+                      } else {
+                        Alert.alert('Info', 'Please select room and dates first');
+                      }
+                    }}
+                  >
+                    <Text style={styles.calculateButtonText}>Calculate</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
 
               <View style={styles.formGroup}>
@@ -885,6 +941,22 @@ const styles = StyleSheet.create({
   createButtonText: {
     color: '#ffffff',
     fontSize: 16,
+    fontFamily: 'Inter-SemiBold',
+  },
+  totalAmountContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  calculateButton: {
+    backgroundColor: '#10b981',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  calculateButtonText: {
+    color: 'white',
+    fontSize: 12,
     fontFamily: 'Inter-SemiBold',
   },
   formRow: {

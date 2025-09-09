@@ -599,11 +599,34 @@ export default function MenuManagement() {
                   </View>
 
                   <View style={styles.formGroup}>
+                    <Text style={styles.formLabel}>Description *</Text>
+                    <TextInput
+                      style={[styles.formInput, styles.textArea]}
+                      value={selectedItem.description}
+                      onChangeText={(text) => setSelectedItem({ ...selectedItem, description: text })}
+                      placeholder="Describe the item"
+                      multiline
+                      numberOfLines={3}
+                    />
+                  </View>
+
+                  <View style={styles.formGroup}>
                     <Text style={styles.formLabel}>Price *</Text>
                     <TextInput
                       style={styles.formInput}
                       value={selectedItem.price.toString()}
                       onChangeText={(text) => setSelectedItem({ ...selectedItem, price: Number(text) || 0 })}
+                      placeholder="0.00"
+                      keyboardType="numeric"
+                    />
+                  </View>
+
+                  <View style={styles.formGroup}>
+                    <Text style={styles.formLabel}>Cost Price *</Text>
+                    <TextInput
+                      style={styles.formInput}
+                      value={selectedItem.cost_price.toString()}
+                      onChangeText={(text) => setSelectedItem({ ...selectedItem, cost_price: Number(text) || 0 })}
                       placeholder="0.00"
                       keyboardType="numeric"
                     />
@@ -620,6 +643,32 @@ export default function MenuManagement() {
                     </View>
                   </View>
 
+                  <View style={styles.formGroup}>
+                    <Text style={styles.formLabel}>Dietary Options</Text>
+                    <View style={styles.switchContainer}>
+                      <View style={styles.switchRow}>
+                        <Text style={styles.switchLabel}>Vegetarian</Text>
+                        <Switch
+                          value={selectedItem.is_vegetarian}
+                          onValueChange={(value) => setSelectedItem({ ...selectedItem, is_vegetarian: value })}
+                        />
+                      </View>
+                      <View style={styles.switchRow}>
+                        <Text style={styles.switchLabel}>Vegan</Text>
+                        <Switch
+                          value={selectedItem.is_vegan}
+                          onValueChange={(value) => setSelectedItem({ ...selectedItem, is_vegan: value })}
+                        />
+                      </View>
+                      <View style={styles.switchRow}>
+                        <Text style={styles.switchLabel}>Gluten Free</Text>
+                        <Switch
+                          value={selectedItem.is_gluten_free}
+                          onValueChange={(value) => setSelectedItem({ ...selectedItem, is_gluten_free: value })}
+                        />
+                      </View>
+                    </View>
+                  </View>
                   <TouchableOpacity style={styles.updateButton} onPress={updateMenuItem}>
                     <Text style={styles.updateButtonText}>Update Menu Item</Text>
                   </TouchableOpacity>
@@ -1078,5 +1127,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
+  },
+  switchContainer: {
+    gap: 12,
+  },
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top',
   },
 });
