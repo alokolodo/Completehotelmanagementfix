@@ -1,6 +1,5 @@
 import { Tabs } from 'expo-router';
 import { useRouter, usePathname } from 'expo-router';
-import { Alert } from 'react-native';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -138,7 +137,9 @@ export default function TabLayout() {
               <Building size={24} color="white" />
             </LinearGradient>
             <View style={styles.hotelInfo}>
-              <Text style={styles.hotelName}>Grand Hotel</Text>
+              <Text style={styles.hotelName}>
+                {user?.role === 'admin' || user?.role === 'manager' ? 'Grand Hotel' : 'Grand Hotel'}
+              </Text>
               <Text style={styles.userRole}>{user?.role.replace('_', ' ').toUpperCase()}</Text>
             </View>
           </View>

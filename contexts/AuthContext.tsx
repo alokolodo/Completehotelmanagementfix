@@ -123,9 +123,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
+      console.log('Starting sign out process...');
       await AsyncStorage.removeItem('current_user');
       setUser(null);
       console.log('Sign out successful');
+      
+      // Force a small delay to ensure state updates
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       return { error: null };
     } catch (error) {
       console.error('Sign out error:', error);

@@ -55,6 +55,33 @@ export default function Settings() {
     debugMode: false,
   });
 
+  // Load hotel settings on component mount
+  useEffect(() => {
+    loadHotelSettings();
+  }, []);
+
+  const loadHotelSettings = async () => {
+    try {
+      const savedSettings = await AsyncStorage.getItem('hotel_settings');
+      if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        setHotelSettings(settings);
+      }
+    } catch (error) {
+      console.error('Failed to load hotel settings:', error);
+    }
+  };
+
+  const saveHotelSettings = async () => {
+    try {
+      await AsyncStorage.setItem('hotel_settings', JSON.stringify(hotelSettings));
+      return true;
+    } catch (error) {
+      console.error('Failed to save hotel settings:', error);
+      return false;
+    }
+  };
+
   React.useEffect(() => {
     // Entrance animations
     Animated.parallel([
@@ -85,17 +112,8 @@ export default function Settings() {
           text: 'Sign Out', 
           style: 'destructive',
           onPress: async () => {
-            try {
-              const result = await signOut();
-              if (result.error) {
-                Alert.alert('Error', 'Failed to sign out. Please try again.');
-              } else {
-                router.replace('/auth');
-              }
-            } catch (error) {
-              console.error('Sign out error:', error);
-              Alert.alert('Error', 'Failed to sign out. Please try again.');
-            }
+            await signOut();
+            router.replace('/auth');
           }
         },
       ]
