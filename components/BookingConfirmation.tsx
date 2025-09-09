@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { CheckCircle, Calendar, User, MapPin, DollarSign, Mail, Phone } from 'lucide-react-native';
+import { CircleCheck as CheckCircle, Calendar, User, MapPin, DollarSign, Mail, Phone } from 'lucide-react-native';
 import { Database } from '@/types/database';
 
 type Booking = Database['public']['Tables']['bookings']['Row'];
