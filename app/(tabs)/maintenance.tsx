@@ -644,6 +644,19 @@ export default function Maintenance() {
               </View>
 
               <View style={styles.formGroup}>
+                <DatePicker
+                  label="Estimated Completion Date"
+                  value={newRequest.estimated_completion?.split('T')[0] || ''}
+                  onDateChange={(date) => setNewRequest({ 
+                    ...newRequest, 
+                    estimated_completion: date ? new Date(date).toISOString() : undefined 
+                  })}
+                  placeholder="Select target completion date"
+                  minimumDate={new Date().toISOString().split('T')[0]}
+                />
+              </View>
+
+              <View style={styles.formGroup}>
                 <Text style={styles.formLabel}>Estimated Cost</Text>
                 <TextInput
                   style={styles.formInput}

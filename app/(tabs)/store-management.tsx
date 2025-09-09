@@ -18,7 +18,7 @@ import { db } from '@/lib/database';
 import { Database } from '@/types/database';
 import { ExcelImporter } from '@/components/ExcelImporter';
 import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
-import { Package, Plus, Search, TrendingUp, TrendingDown, ChefHat, Wine, TriangleAlert as AlertTriangle } from 'lucide-react-native';
+import { Package, Plus, Search, TrendingUp, TrendingDown, ChefHat, Wine, TriangleAlert as AlertTriangle, Download } from 'lucide-react-native';
 
 type InventoryItem = Database['public']['Tables']['inventory']['Row'];
 

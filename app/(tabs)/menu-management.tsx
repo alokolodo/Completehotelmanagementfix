@@ -18,7 +18,7 @@ import { db } from '@/lib/database';
 import { Database } from '@/types/database';
 import { ExcelImporter } from '@/components/ExcelImporter';
 import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
-import { ChefHat, Plus, Search, CreditCard as Edit, Trash2, Wine, Coffee, Utensils, Star } from 'lucide-react-native';
+import { ChefHat, Plus, Search, CreditCard as Edit, Trash2, Wine, Coffee, Utensils, Star, Download } from 'lucide-react-native';
 
 type MenuItem = Database['public']['Tables']['menu_items']['Row'];
 
@@ -288,14 +288,8 @@ export default function MenuManagement() {
             <TouchableOpacity
               style={styles.templateButton}
               onPress={() => {
-                Alert.alert(
-                  'Download Template',
-                  'Download Excel template for menu items?',
-                  [
-                    { text: 'Cancel', style: 'cancel' },
-                    { text: 'Download', onPress: () => {} }
-                  ]
-                );
+                // Template download is handled by ExcelTemplateDownloader component
+                console.log('Template download handled by component');
               }}
             >
               <LinearGradient

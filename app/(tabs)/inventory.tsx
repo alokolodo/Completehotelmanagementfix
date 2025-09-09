@@ -18,7 +18,7 @@ import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/database';
 import { ExcelImporter } from '@/components/ExcelImporter';
 import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
-import { Package, Plus, Search, TriangleAlert as AlertTriangle, TrendingDown, CreditCard as Edit, Star, Sparkles, Boxes } from 'lucide-react-native';
+import { Package, Plus, Search, TriangleAlert as AlertTriangle, TrendingDown, CreditCard as Edit, Star, Sparkles, Boxes, Download } from 'lucide-react-native';
 
 type InventoryItem = Database['public']['Tables']['inventory']['Row'];
 

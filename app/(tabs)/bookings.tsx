@@ -573,6 +573,17 @@ export default function Bookings() {
               </TouchableOpacity>
             </View>
 
+            {/* Excel Template Download Section */}
+            <View style={styles.templateSection}>
+              <Text style={styles.templateSectionTitle}>📊 Excel Templates</Text>
+              <ExcelTemplateDownloader
+                templateType="bookings"
+                onDownloadComplete={() => {
+                  Alert.alert('Success', 'Bookings template downloaded! Fill in your data and use the import function.');
+                }}
+              />
+            </View>
+
             <ScrollView style={styles.modalBody}>
               <View style={styles.formGroup}>
                 <Text style={styles.formLabel}>Guest Name *</Text>
@@ -1114,5 +1125,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: '#94a3b8',
     marginTop: 2,
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
 });

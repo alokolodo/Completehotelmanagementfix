@@ -66,6 +66,40 @@ export function ExcelTemplateDownloader({ templateType, onDownloadComplete }: Ex
           is_vegan: true,
           is_gluten_free: true,
           calories: 150
+        },
+        {
+          name: 'Beef Tenderloin',
+          description: 'Premium beef with red wine reduction',
+          category: 'main_course',
+          subcategory: 'beef',
+          price: 42.99,
+          cost_price: 25.00,
+          ingredients: 'beef tenderloin, red wine, shallots, butter, herbs',
+          allergens: '',
+          prep_time_minutes: 20,
+          cooking_time_minutes: 25,
+          difficulty_level: 'hard',
+          is_vegetarian: false,
+          is_vegan: false,
+          is_gluten_free: true,
+          calories: 650
+        },
+        {
+          name: 'Vegetarian Pasta',
+          description: 'Fresh pasta with seasonal vegetables',
+          category: 'main_course',
+          subcategory: 'pasta',
+          price: 19.99,
+          cost_price: 8.50,
+          ingredients: 'pasta, zucchini, bell peppers, tomatoes, olive oil, herbs',
+          allergens: 'gluten',
+          prep_time_minutes: 15,
+          cooking_time_minutes: 20,
+          difficulty_level: 'easy',
+          is_vegetarian: true,
+          is_vegan: true,
+          is_gluten_free: false,
+          calories: 420
         }
       ];
 
@@ -153,6 +187,38 @@ export function ExcelTemplateDownloader({ templateType, onDownloadComplete }: Ex
           expiry_date: '',
           is_perishable: false,
           barcode: '3456789012345'
+        },
+        {
+          item_name: 'Coffee Beans',
+          category: 'food',
+          subcategory: 'beverages',
+          current_stock: 15,
+          minimum_stock: 8,
+          maximum_stock: 40,
+          unit: 'kg',
+          unit_cost: 12.99,
+          supplier: 'Roasters United',
+          supplier_contact: '+1-555-0112',
+          storage_location: 'Kitchen Pantry',
+          expiry_date: '2024-06-15',
+          is_perishable: true,
+          barcode: '4567890123456'
+        },
+        {
+          item_name: 'Wine Glasses',
+          category: 'bar_equipment',
+          subcategory: 'glassware',
+          current_stock: 48,
+          minimum_stock: 20,
+          maximum_stock: 100,
+          unit: 'pieces',
+          unit_cost: 8.50,
+          supplier: 'Bar Equipment Pro',
+          supplier_contact: '+1-555-0109',
+          storage_location: 'Bar Storage',
+          expiry_date: '',
+          is_perishable: false,
+          barcode: '5678901234567'
         }
       ];
 
@@ -224,6 +290,22 @@ export function ExcelTemplateDownloader({ templateType, onDownloadComplete }: Ex
           payment_status: 'partial',
           booking_status: 'confirmed',
           special_requests: 'Extra towels please'
+        },
+        {
+          guest_name: 'Mike Davis',
+          guest_email: 'mike.davis@email.com',
+          guest_phone: '+1-555-0103',
+          guest_id_number: 'ID456789123',
+          room_number: '301',
+          check_in: '2024-02-25',
+          check_out: '2024-02-27',
+          adults: 2,
+          children: 2,
+          total_amount: 700.00,
+          deposit_amount: 200.00,
+          payment_status: 'paid',
+          booking_status: 'confirmed',
+          special_requests: 'Connecting rooms preferred'
         }
       ];
 
@@ -283,21 +365,29 @@ export function ExcelTemplateDownloader({ templateType, onDownloadComplete }: Ex
 
       // Add comprehensive instructions
       const instructions = [
-        { section: 'Hotel Management System - Complete Import Template' },
-        { section: '' },
-        { section: 'This template contains three sheets:' },
-        { section: '1. Menu Items - Restaurant and bar menu items' },
-        { section: '2. Inventory Items - Kitchen, bar, and hotel supplies' },
-        { section: '3. Bookings - Guest reservations' },
-        { section: '' },
-        { section: 'Instructions:' },
-        { section: '1. Fill in your data in the appropriate sheets' },
-        { section: '2. Keep column headers exactly as shown' },
-        { section: '3. Follow the sample data format' },
-        { section: '4. Save as .xlsx format' },
-        { section: '5. Import using the respective import functions' },
-        { section: '' },
-        { section: 'Support: support@hotelmanagementsystem.com' }
+        { instruction: 'Hotel Management System - Complete Import Template' },
+        { instruction: '' },
+        { instruction: 'This template contains multiple sheets:' },
+        { instruction: '1. Menu Items - Restaurant and bar menu items' },
+        { instruction: '2. Inventory Items - Kitchen, bar, and hotel supplies' },
+        { instruction: '3. Bookings - Guest reservations' },
+        { instruction: '' },
+        { instruction: 'Import Instructions:' },
+        { instruction: '1. Fill in your data in the appropriate sheets' },
+        { instruction: '2. Keep column headers exactly as shown' },
+        { instruction: '3. Follow the sample data format' },
+        { instruction: '4. Save as .xlsx format' },
+        { instruction: '5. Import using the respective import functions in the system' },
+        { instruction: '' },
+        { instruction: 'Data Validation:' },
+        { instruction: '• Required fields are marked with * in the headers' },
+        { instruction: '• Use exact category names as shown in samples' },
+        { instruction: '• Date format: YYYY-MM-DD' },
+        { instruction: '• Boolean fields: true/false' },
+        { instruction: '• Numeric fields: Use decimal format (e.g., 12.99)' },
+        { instruction: '' },
+        { instruction: 'Support: support@hotelmanagementsystem.com' },
+        { instruction: 'Documentation: Available in the system help section' }
       ];
       
       const instructionsSheet = XLSX.utils.json_to_sheet(instructions);
@@ -312,23 +402,29 @@ export function ExcelTemplateDownloader({ templateType, onDownloadComplete }: Ex
 
   const downloadTemplate = async () => {
     try {
+      console.log('🔄 Starting template download for:', templateType);
+      
       let workbook;
       let filename;
 
       switch (templateType) {
         case 'menu':
+          console.log('📋 Generating menu template...');
           workbook = await generateMenuTemplate();
           filename = 'Menu_Items_Template.xlsx';
           break;
         case 'inventory':
+          console.log('📦 Generating inventory template...');
           workbook = await generateInventoryTemplate();
           filename = 'Inventory_Template.xlsx';
           break;
         case 'bookings':
+          console.log('🏨 Generating bookings template...');
           workbook = await generateBookingsTemplate();
           filename = 'Bookings_Template.xlsx';
           break;
         case 'all':
+          console.log('📊 Generating complete template...');
           workbook = await generateCompleteTemplate();
           filename = 'Hotel_Management_Complete_Template.xlsx';
           break;
@@ -336,8 +432,12 @@ export function ExcelTemplateDownloader({ templateType, onDownloadComplete }: Ex
           throw new Error('Invalid template type');
       }
 
+      console.log('✅ Template generated, converting to binary...');
+      
       // Convert workbook to binary
       const wbout = XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' });
+      
+      console.log('💾 Writing file to device storage...');
       
       // Create file URI
       const fileUri = FileSystem.documentDirectory + filename;
@@ -347,16 +447,23 @@ export function ExcelTemplateDownloader({ templateType, onDownloadComplete }: Ex
         encoding: FileSystem.EncodingType.Base64,
       });
 
+      console.log('📤 File written, attempting to share...');
+      console.log('File URI:', fileUri);
+      
       // Share file
       if (await Sharing.isAvailableAsync()) {
+        console.log('📱 Sharing is available, opening share dialog...');
         await Sharing.shareAsync(fileUri, {
           mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           dialogTitle: `Download ${filename}`,
+          UTI: 'com.microsoft.excel.xlsx',
         });
+        console.log('✅ Share dialog opened successfully');
       } else {
+        console.log('⚠️ Sharing not available, showing file location');
         Alert.alert(
           'Download Complete',
-          `Template saved to: ${fileUri}\n\nYou can find it in your device's Downloads folder.`
+          `Template saved successfully!\n\nFile: ${filename}\nLocation: ${fileUri}\n\nYou can find it in your device's Downloads folder or share it using your device's sharing options.`
         );
       }
 
@@ -364,16 +471,23 @@ export function ExcelTemplateDownloader({ templateType, onDownloadComplete }: Ex
         onDownloadComplete();
       }
 
+      console.log('🎉 Template download completed successfully');
+      
       Alert.alert(
         'Template Downloaded',
-        `${filename} has been downloaded successfully. You can now fill in your data and import it back into the system.`
+        `✅ ${filename} downloaded successfully!\n\n📝 Next steps:\n1. Open the file in Excel or Google Sheets\n2. Replace sample data with your actual data\n3. Keep column headers exactly as shown\n4. Save and use the Import function\n\n💡 The template includes sample data and detailed instructions to guide you.`
       );
 
     } catch (error) {
       console.error('Error downloading template:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        templateType,
+      });
       Alert.alert(
         'Download Error',
-        'Failed to download template. Please try again or contact support.'
+        `❌ Failed to download template.\n\nError: ${error.message || 'Unknown error'}\n\nPlease try again or contact support if the issue persists.`
       );
     }
   };

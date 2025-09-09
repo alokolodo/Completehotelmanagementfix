@@ -402,8 +402,20 @@ export function ExcelImporter({ visible, onClose, importType, onImportComplete }
                       <Text style={styles.tipText}>• Expiry dates: Use YYYY-MM-DD format</Text>
                       <Text style={styles.tipText}>• Storage locations: Kitchen Pantry, Bar Storage, Walk-in Cooler, etc.</Text>
                     </View>
+                    <Text style={styles.tipText}>• Boolean fields: Use true/false for is_perishable</Text>
+                    <Text style={styles.tipText}>• Required fields: item_name, category, unit_cost, supplier</Text>
                   )}
                 </View>
+
+                {importType === 'all' && (
+                  <View style={styles.tipBox}>
+                    <Text style={styles.tipTitle}>📊 Complete Import Tips:</Text>
+                    <Text style={styles.tipText}>• Use separate sheets for different data types</Text>
+                    <Text style={styles.tipText}>• Follow the sample data format exactly</Text>
+                    <Text style={styles.tipText}>• Import sheets one at a time for better error tracking</Text>
+                    <Text style={styles.tipText}>• Verify data before importing large datasets</Text>
+                  </View>
+                )}
 
                 {/* Import Section */}
                 <View style={styles.section}>

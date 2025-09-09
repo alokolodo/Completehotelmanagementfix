@@ -423,6 +423,17 @@ export default function Halls() {
             </View>
 
             <ScrollView style={styles.modalBody}>
+              {/* Excel Template Download Section */}
+              <View style={styles.templateSection}>
+                <Text style={styles.templateSectionTitle}>📊 Excel Templates</Text>
+                <ExcelTemplateDownloader
+                  templateType="all"
+                  onDownloadComplete={() => {
+                    Alert.alert('Success', 'Complete template downloaded! This includes halls, bookings, and event management data.');
+                  }}
+                />
+              </View>
+
               <View style={styles.formGroup}>
                 <Text style={styles.formLabel}>Hall *</Text>
                 <ScrollView horizontal style={styles.hallSelector}>
@@ -974,6 +985,18 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
+  },
+  templateSection: {
+    backgroundColor: '#f8fafc',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  templateSectionTitle: {
+    fontSize: 16,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 12,
   },
   timeInput: {
     borderWidth: 1,
