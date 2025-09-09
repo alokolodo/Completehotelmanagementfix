@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import { useRouter, usePathname } from 'expo-router';
+import { Alert } from 'react-native';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';

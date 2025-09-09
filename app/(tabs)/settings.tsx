@@ -85,8 +85,17 @@ export default function Settings() {
           text: 'Sign Out', 
           style: 'destructive',
           onPress: async () => {
-            await signOut();
-            router.replace('/auth');
+            try {
+              const result = await signOut();
+              if (result.error) {
+                Alert.alert('Error', 'Failed to sign out. Please try again.');
+              } else {
+                router.replace('/auth');
+              }
+            } catch (error) {
+              console.error('Sign out error:', error);
+              Alert.alert('Error', 'Failed to sign out. Please try again.');
+            }
           }
         },
       ]
