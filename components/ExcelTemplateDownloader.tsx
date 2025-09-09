@@ -453,11 +453,19 @@ export function ExcelTemplateDownloader({ templateType, onDownloadComplete }: Ex
       // Share file
       if (await Sharing.isAvailableAsync()) {
         console.log('📱 Sharing is available, opening share dialog...');
-        await Sharing.shareAsync(fileUri, {
-          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          dialogTitle: `Download ${filename}`,
-          UTI: 'com.microsoft.excel.xlsx',
-        });
+        try {
+          await Sharing.shareAsync(fileUri, {
+            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            dialogTitle: `Download ${filename}`,
+            UTI: 'com.microsoft.excel.xlsx',
+          });
+        } catch (shareError) {
+          console.log('Share error, showing file location instead:', shareError);
+          Alert.alert(
+            'Download Complete',
+            `Template saved successfully!\n\nFile: ${filename}\nLocation: ${fileUri}\n\nYou can find it in your device's Downloads folder.`
+          );
+        }
         console.log('✅ Share dialog opened successfully');
       } else {
         console.log('⚠️ Sharing not available, showing file location');

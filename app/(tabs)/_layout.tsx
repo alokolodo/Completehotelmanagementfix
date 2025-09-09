@@ -137,9 +137,7 @@ export default function TabLayout() {
               <Building size={24} color="white" />
             </LinearGradient>
             <View style={styles.hotelInfo}>
-              <Text style={styles.hotelName}>
-                {user?.role === 'admin' || user?.role === 'manager' ? 'Grand Hotel' : 'Grand Hotel'}
-              </Text>
+              <Text style={styles.hotelName}>{hotelName}</Text>
               <Text style={styles.userRole}>{user?.role.replace('_', ' ').toUpperCase()}</Text>
             </View>
           </View>

@@ -55,33 +55,6 @@ export default function Settings() {
     debugMode: false,
   });
 
-  // Load hotel settings on component mount
-  useEffect(() => {
-    loadHotelSettings();
-  }, []);
-
-  const loadHotelSettings = async () => {
-    try {
-      const savedSettings = await AsyncStorage.getItem('hotel_settings');
-      if (savedSettings) {
-        const settings = JSON.parse(savedSettings);
-        setHotelSettings(settings);
-      }
-    } catch (error) {
-      console.error('Failed to load hotel settings:', error);
-    }
-  };
-
-  const saveHotelSettings = async () => {
-    try {
-      await AsyncStorage.setItem('hotel_settings', JSON.stringify(hotelSettings));
-      return true;
-    } catch (error) {
-      console.error('Failed to save hotel settings:', error);
-      return false;
-    }
-  };
-
   React.useEffect(() => {
     // Entrance animations
     Animated.parallel([
@@ -98,8 +71,18 @@ export default function Settings() {
     ]).start();
   }, []);
 
-  const handleSaveSettings = () => {
-    Alert.alert('Success', 'Settings saved successfully');
+  const handleSaveSettings = async () => {
+    // Update hotel name in the system
+    if (hotelSettings.hotelName) {
+      const saved = await saveHotelSettings();
+      if (saved) {
+        Alert.alert('Success', 'Settings saved successfully. Changes will be reflected across the system.');
+      } else {
+        Alert.alert('Error', 'Failed to save settings. Please try again.');
+      }
+    } else {
+      Alert.alert('Error', 'Hotel name cannot be empty');
+    }
   };
 
   const handleSignOut = async () => {
