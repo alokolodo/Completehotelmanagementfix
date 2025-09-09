@@ -401,9 +401,9 @@ export function ExcelImporter({ visible, onClose, importType, onImportComplete }
                       <Text style={styles.tipText}>• Units: pieces, kg, liters, bottles, boxes, etc.</Text>
                       <Text style={styles.tipText}>• Expiry dates: Use YYYY-MM-DD format</Text>
                       <Text style={styles.tipText}>• Storage locations: Kitchen Pantry, Bar Storage, Walk-in Cooler, etc.</Text>
+                      <Text style={styles.tipText}>• Boolean fields: Use true/false for is_perishable</Text>
+                      <Text style={styles.tipText}>• Required fields: item_name, category, unit_cost, supplier</Text>
                     </View>
-                    <Text style={styles.tipText}>• Boolean fields: Use true/false for is_perishable</Text>
-                    <Text style={styles.tipText}>• Required fields: item_name, category, unit_cost, supplier</Text>
                   )}
                 </View>
 
