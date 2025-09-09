@@ -14,7 +14,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as XLSX from 'xlsx';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
-import { Upload, FileSpreadsheet, Download, CheckCircle, AlertCircle } from 'lucide-react-native';
+import { Upload, FileSpreadsheet, Download, CircleCheck as CheckCircle, CircleAlert as AlertCircle } from 'lucide-react-native';
 
 type MenuItem = Database['public']['Tables']['menu_items']['Row'];
 type InventoryItem = Database['public']['Tables']['inventory']['Row'];
