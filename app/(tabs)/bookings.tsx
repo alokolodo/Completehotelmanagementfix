@@ -55,29 +55,48 @@ export default function Bookings() {
   const loadData = async () => {
     try {
       setLoading(true);
-      console.log('Loading bookings and rooms data...');
+      console.log('📊 LOADING BOOKINGS AND ROOMS DATA...');
+      
+      // Initialize database first
+      await db.initialize();
+      console.log('✅ Database initialized for loading');
       
       const [bookingsData, roomsData] = await Promise.all([
         db.select<Booking>('bookings'),
         db.select<Room>('rooms')
       ]);
       
-      console.log('Loaded bookings:', bookingsData.length);
-      console.log('Loaded rooms:', roomsData.length);
+      console.log('✅ LOADED DATA SUMMARY:');
+      console.log('  - Bookings:', bookingsData.length);
+      console.log('  - Rooms:', roomsData.length);
+      
+      if (bookingsData.length > 0) {
+        console.log('📋 Recent bookings:');
+        bookingsData.slice(-3).forEach((booking, index) => {
+          console.log(`  ${index + 1}. ${booking.guest_name} - Room ${booking.room_id} - ${booking.booking_status}`);
+        });
+      }
       
       setBookings(bookingsData);
       setRooms(roomsData);
+      
+      console.log('✅ State updated with loaded data');
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('❌ ERROR LOADING DATA:', error);
       Alert.alert('Error', `Failed to load bookings data: ${error.message || error}`);
     } finally {
       setLoading(false);
+      console.log('📊 Loading completed');
     }
   };
 
   const createBooking = async () => {
+    console.log('=== BOOKING CREATION STARTED ===');
+    console.log('Form data:', newBooking);
+    
     if (!newBooking.guest_name || !newBooking.guest_email || !newBooking.room_id || 
         !newBooking.check_in || !newBooking.check_out) {
+      console.log('❌ Validation failed - missing required fields');
       Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
@@ -88,27 +107,38 @@ export default function Bookings() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    console.log('Date validation:', {
+      checkIn: checkInDate,
+      checkOut: checkOutDate,
+      today: today
+    });
+
     if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
+      console.log('❌ Invalid date format');
       Alert.alert('Error', 'Please enter valid dates in YYYY-MM-DD format');
       return;
     }
 
     if (checkInDate < today) {
+      console.log('❌ Check-in date in the past');
       Alert.alert('Error', 'Check-in date cannot be in the past');
       return;
     }
 
     if (checkOutDate <= checkInDate) {
+      console.log('❌ Check-out date before check-in');
       Alert.alert('Error', 'Check-out date must be after check-in date');
       return;
     }
 
     // Calculate total amount if not provided
     if (newBooking.total_amount === 0) {
+      console.log('💰 Auto-calculating total amount');
       const selectedRoom = rooms.find(r => r.id === newBooking.room_id);
       if (selectedRoom) {
         const nights = calculateNights(newBooking.check_in, newBooking.check_out);
         const calculatedAmount = selectedRoom.price_per_night * nights;
+        console.log('Calculated amount:', calculatedAmount, 'for', nights, 'nights');
         setNewBooking({ ...newBooking, total_amount: calculatedAmount });
         Alert.alert(
           'Auto-calculated Total',
@@ -121,6 +151,7 @@ export default function Bookings() {
 
     try {
       setLoading(true);
+      console.log('🔄 Starting database operations...');
       
       // Create booking with proper data structure
       const bookingData = {
@@ -132,19 +163,32 @@ export default function Bookings() {
       
       console.log('Creating booking with data:', bookingData);
       
-      const booking = await db.insert<Booking>('bookings', bookingData);
+      // Initialize database first
+      await db.initialize();
+      console.log('✅ Database initialized');
       
-      console.log('Booking created successfully:', booking);
+      const createdBooking = await db.insert<Booking>('bookings', bookingData);
+      
+      console.log('✅ Booking created successfully:', createdBooking);
 
       // Update room status to reserved
+      console.log('🏠 Updating room status to reserved...');
       await db.update<Room>('rooms', newBooking.room_id, { status: 'reserved' });
       
-      console.log('Room status updated to reserved');
+      console.log('✅ Room status updated to reserved');
+      
+      // Verify booking was saved
+      const allBookings = await db.select<Booking>('bookings');
+      console.log('📊 Total bookings in database:', allBookings.length);
+      const savedBooking = allBookings.find(b => b.id === createdBooking.id);
+      console.log('✅ Booking verification:', savedBooking ? 'FOUND' : 'NOT FOUND');
 
       // Show confirmation modal instead of alert
-      setConfirmedBooking(booking);
+      setConfirmedBooking(createdBooking);
       setNewBookingModal(false);
       setConfirmationModal(true);
+      
+      console.log('🎉 Booking creation completed successfully');
       
       setNewBooking({
         guest_name: '',
@@ -160,12 +204,22 @@ export default function Bookings() {
         children: 0,
         special_requests: '',
       });
+      
+      // Force reload data to show new booking
+      console.log('🔄 Reloading bookings data...');
       loadData();
+      
     } catch (error) {
       console.error('Error creating booking:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        bookingData
+      });
       Alert.alert('Error', `Failed to create booking: ${error.message || error}`);
     } finally {
       setLoading(false);
+      console.log('=== BOOKING CREATION ENDED ===');
     }
   };
 
@@ -665,7 +719,7 @@ export default function Bookings() {
               </View>
               <TouchableOpacity style={styles.createButton} onPress={createBooking}>
                 <Text style={styles.createButtonText}>
-                  {loading ? 'Creating...' : 'Create Booking'}
+                  {loading ? 'Creating Booking...' : 'Create Booking'}
                 </Text>
               </TouchableOpacity>
             </ScrollView>

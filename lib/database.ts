@@ -477,11 +477,32 @@ export class LocalDatabase {
 
   async save() {
     try {
-      console.log('Saving database to AsyncStorage...');
+      console.log('💾 SAVING DATABASE TO ASYNCSTORAGE...');
+      console.log('Database summary before save:', {
+        profiles: this.data.profiles?.length || 0,
+        rooms: this.data.rooms?.length || 0,
+        bookings: this.data.bookings?.length || 0,
+        menu_items: this.data.menu_items?.length || 0,
+        inventory: this.data.inventory?.length || 0,
+      });
+      
       await AsyncStorage.setItem('hotel_database', JSON.stringify(this.data));
-      console.log('Database saved successfully');
+      
+      // Verify the save
+      const savedData = await AsyncStorage.getItem('hotel_database');
+      const parsedData = savedData ? JSON.parse(savedData) : null;
+      
+      console.log('✅ DATABASE SAVED SUCCESSFULLY');
+      console.log('Verification - saved data summary:', {
+        profiles: parsedData?.profiles?.length || 0,
+        rooms: parsedData?.rooms?.length || 0,
+        bookings: parsedData?.bookings?.length || 0,
+        menu_items: parsedData?.menu_items?.length || 0,
+        inventory: parsedData?.inventory?.length || 0,
+      });
+      
     } catch (error) {
-      console.error('Failed to save database:', error);
+      console.error('❌ FAILED TO SAVE DATABASE:', error);
       throw new Error(`Database save failed: ${error.message}`);
     }
   }
@@ -513,7 +534,8 @@ export class LocalDatabase {
   async insert<T>(table: string, data: Omit<T, 'id' | 'created_at' | 'updated_at'>): Promise<T> {
     await this.initialize();
     
-    console.log(`Inserting into ${table}:`, data);
+    console.log(`📝 INSERTING INTO ${table.toUpperCase()}:`);
+    console.log('Data to insert:', JSON.stringify(data, null, 2));
     
     const newItem = {
       ...data,
@@ -522,16 +544,26 @@ export class LocalDatabase {
       updated_at: new Date().toISOString(),
     } as T;
 
+    console.log('Generated item with ID:', (newItem as any).id);
+    
     if (!this.data[table]) {
+      console.log(`Creating new table: ${table}`);
       this.data[table] = [];
     }
     
+    console.log(`Table ${table} before insert:`, this.data[table].length, 'items');
     this.data[table].push(newItem);
+    console.log(`Table ${table} after insert:`, this.data[table].length, 'items');
     
-    console.log(`Inserted item with ID: ${(newItem as any).id}`);
-    console.log(`Table ${table} now has ${this.data[table].length} items`);
+    console.log('✅ Item successfully added to memory');
     
+    console.log('💾 Saving to AsyncStorage...');
     await this.save();
+    console.log('✅ Database saved to AsyncStorage');
+    
+    // Verify the save worked
+    const verification = await this.select(table, { id: (newItem as any).id });
+    console.log('🔍 Verification check:', verification.length > 0 ? 'SUCCESS' : 'FAILED');
     
     return newItem;
   }
