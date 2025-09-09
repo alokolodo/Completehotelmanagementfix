@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/lib/database';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { Database } from '@/types/database';
 import { BookOpen, ChefHat, Clock, Users, Star, Play, Package, TrendingDown } from 'lucide-react-native';
 
@@ -208,6 +209,17 @@ export default function RecipeKitchen() {
           </View>
         </View>
       </LinearGradient>
+
+      {/* Template Download Section */}
+      <View style={styles.templateSection}>
+        <Text style={styles.templateSectionTitle}>📊 Recipe Templates</Text>
+        <ExcelTemplateDownloader
+          templateType="menu"
+          onDownloadComplete={() => {
+            Alert.alert('Success', 'Recipe and menu template downloaded! This includes templates for recipes and menu items.');
+          }}
+        />
+      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -780,5 +792,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
 });

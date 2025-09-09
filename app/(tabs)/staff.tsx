@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '@/lib/supabase';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { Database } from '@/types/database';
 import { Users, Plus, Search, Mail, Shield, CreditCard as Edit, Star, Sparkles, UserCheck } from 'lucide-react-native';
 
@@ -283,6 +284,17 @@ export default function Staff() {
             onChangeText={setSearchQuery}
           />
         </View>
+      </View>
+
+      {/* Template Download Section */}
+      <View style={styles.templateSection}>
+        <Text style={styles.templateSectionTitle}>📊 Staff Templates</Text>
+        <ExcelTemplateDownloader
+          templateType="all"
+          onDownloadComplete={() => {
+            Alert.alert('Success', 'Staff management template downloaded! This includes templates for bulk staff import and management.');
+          }}
+        />
       </View>
 
       {/* Role Filters */}
@@ -957,5 +969,16 @@ const styles = StyleSheet.create({
   },
   dangerButtonText: {
     color: '#ef4444',
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
 });

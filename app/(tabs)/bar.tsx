@@ -255,6 +255,17 @@ export default function Bar() {
         </View>
       </LinearGradient>
 
+      {/* Template Download Section */}
+      <View style={styles.templateSection}>
+        <Text style={styles.templateSectionTitle}>📊 Bar Templates</Text>
+        <ExcelTemplateDownloader
+          templateType="menu"
+          onDownloadComplete={() => {
+            Alert.alert('Success', 'Bar template downloaded! This includes beverage menu and cocktail recipe templates.');
+          }}
+        />
+      </View>
+
       <View style={styles.mainContent}>
         {/* Left Panel - Categories and Items */}
         <View style={styles.leftPanel}>

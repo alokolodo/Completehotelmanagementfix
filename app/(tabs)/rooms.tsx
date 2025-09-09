@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { Bed, Plus, Search, Eye, Clock, Users, DollarSign, Wrench, Filter } from 'lucide-react-native';
 
 type Room = Database['public']['Tables']['rooms']['Row'];
@@ -642,5 +643,16 @@ const styles = StyleSheet.create({
   },
   modalStatusButtonTextActive: {
     color: '#ffffff',
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
 });
