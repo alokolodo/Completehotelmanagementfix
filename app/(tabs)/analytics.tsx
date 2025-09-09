@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '@/lib/database';
+import { DatePicker } from '@/components/DatePicker';
 import { ChartBar as BarChart, TrendingUp, TrendingDown, DollarSign, Users, Bed, Calendar, ChefHat, Wine, Building } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');

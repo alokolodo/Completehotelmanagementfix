@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
+import { DatePicker } from '@/components/DatePicker';
 import { Wrench, Plus, Search, TriangleAlert as AlertTriangle, Clock, DollarSign, User, MapPin } from 'lucide-react-native';
 
 type MaintenanceRequest = Database['public']['Tables']['maintenance_requests']['Row'];

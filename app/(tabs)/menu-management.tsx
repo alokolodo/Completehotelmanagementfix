@@ -17,6 +17,7 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
 import { ExcelImporter } from '@/components/ExcelImporter';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { ChefHat, Plus, Search, CreditCard as Edit, Trash2, Wine, Coffee, Utensils, Star } from 'lucide-react-native';
 
 type MenuItem = Database['public']['Tables']['menu_items']['Row'];
@@ -284,9 +285,40 @@ export default function MenuManagement() {
                 <Text style={styles.importButtonText}>📊</Text>
               </LinearGradient>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.templateButton}
+              onPress={() => {
+                Alert.alert(
+                  'Download Template',
+                  'Download Excel template for menu items?',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Download', onPress: () => {} }
+                  ]
+                );
+              }}
+            >
+              <LinearGradient
+                colors={['#059669', '#047857']}
+                style={styles.addButtonGradient}
+              >
+                <Download size={20} color="white" />
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
         </View>
       </LinearGradient>
+
+      {/* Template Download Section */}
+      <View style={styles.templateSection}>
+        <Text style={styles.templateSectionTitle}>📊 Excel Templates</Text>
+        <ExcelTemplateDownloader
+          templateType="menu"
+          onDownloadComplete={() => {
+            Alert.alert('Success', 'Menu template downloaded! Fill in your data and use the import function.');
+          }}
+        />
+      </View>
 
       {/* Search and Filters */}
       <View style={styles.searchContainer}>
@@ -781,6 +813,26 @@ const styles = StyleSheet.create({
   },
   importButtonText: {
     fontSize: 20,
+  },
+  templateButton: {
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+    marginLeft: 12,
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
   searchContainer: {
     padding: 20,

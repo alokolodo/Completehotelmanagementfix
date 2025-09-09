@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/database';
+import { DatePicker } from '@/components/DatePicker';
 import { Calculator, DollarSign, TrendingUp, TrendingDown, Calendar, FileText, CreditCard, ChartPie as PieChart, Star, Sparkles, ChefHat, Wine } from 'lucide-react-native';
 
 type Booking = Database['public']['Tables']['bookings']['Row'];

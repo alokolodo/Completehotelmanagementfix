@@ -17,6 +17,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/database';
 import { ExcelImporter } from '@/components/ExcelImporter';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { Package, Plus, Search, TriangleAlert as AlertTriangle, TrendingDown, CreditCard as Edit, Star, Sparkles, Boxes } from 'lucide-react-native';
 
 type InventoryItem = Database['public']['Tables']['inventory']['Row'];
@@ -274,6 +275,17 @@ export default function Inventory() {
           </LinearGradient>
         </Animated.View>
       )}
+
+      {/* Template Download Section */}
+      <View style={styles.templateSection}>
+        <Text style={styles.templateSectionTitle}>📊 Excel Templates</Text>
+        <ExcelTemplateDownloader
+          templateType="inventory"
+          onDownloadComplete={() => {
+            Alert.alert('Success', 'Inventory template downloaded! Fill in your data and use the import function.');
+          }}
+        />
+      </View>
 
       {/* Search */}
       <View style={styles.searchContainer}>
@@ -1069,5 +1081,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     fontFamily: 'Inter-SemiBold',
+  },
+  templateSection: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginBottom: 12,
+  },
+  templateSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 16,
   },
 });
