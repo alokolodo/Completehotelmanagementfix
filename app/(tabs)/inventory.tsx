@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/database';
+import { ExcelImporter } from '@/components/ExcelImporter';
 import { Package, Plus, Search, TriangleAlert as AlertTriangle, TrendingDown, CreditCard as Edit, Star, Sparkles, Boxes } from 'lucide-react-native';
 
 type InventoryItem = Database['public']['Tables']['inventory']['Row'];
@@ -33,6 +34,7 @@ export default function Inventory() {
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(30));
+  const [importModal, setImportModal] = useState(false);
 
   const [newItem, setNewItem] = useState({
     item_name: '',
@@ -207,6 +209,17 @@ export default function Inventory() {
               >
                 <Plus size={20} color="white" />
                 <Sparkles size={12} color="white" style={styles.sparkle} />
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.importButton}
+              onPress={() => setImportModal(true)}
+            >
+              <LinearGradient
+                colors={['#7c3aed', '#8b5cf6']}
+                style={styles.addButtonGradient}
+              >
+                <Text style={styles.importButtonText}>📊</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -596,6 +609,14 @@ export default function Inventory() {
           </View>
         </View>
       </Modal>
+
+      {/* Excel Import Modal */}
+      <ExcelImporter
+        visible={importModal}
+        onClose={() => setImportModal(false)}
+        importType="inventory"
+        onImportComplete={loadInventory}
+      />
     </SafeAreaView>
   );
 }
@@ -668,6 +689,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     right: 8,
+  },
+  importButton: {
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  importButtonText: {
+    fontSize: 20,
   },
   alertSection: {
     margin: 20,

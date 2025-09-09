@@ -466,6 +466,110 @@ export default function Bookings() {
                 />
               </View>
 
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Guest Phone</Text>
+                <TextInput
+                  style={styles.formInput}
+                  value={newBooking.guest_phone}
+                  onChangeText={(text) => setNewBooking({ ...newBooking, guest_phone: text })}
+                  placeholder="Enter phone number"
+                  keyboardType="phone-pad"
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Room *</Text>
+                <ScrollView horizontal style={styles.roomSelector}>
+                  {rooms.filter(r => r.status === 'available').map((room) => (
+                    <TouchableOpacity
+                      key={room.id}
+                      style={[
+                        styles.roomOption,
+                        newBooking.room_id === room.id && styles.roomOptionActive,
+                      ]}
+                      onPress={() => setNewBooking({ ...newBooking, room_id: room.id })}
+                    >
+                      <Text style={[
+                        styles.roomOptionText,
+                        newBooking.room_id === room.id && styles.roomOptionTextActive,
+                      ]}>
+                        Room {room.room_number}
+                      </Text>
+                      <Text style={styles.roomOptionType}>{room.room_type}</Text>
+                      <Text style={styles.roomOptionPrice}>${room.price_per_night}/night</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+
+              <View style={styles.formRow}>
+                <View style={styles.formGroup}>
+                  <Text style={styles.formLabel}>Check-in Date *</Text>
+                  <TextInput
+                    style={styles.formInput}
+                    value={newBooking.check_in}
+                    onChangeText={(text) => setNewBooking({ ...newBooking, check_in: text })}
+                    placeholder="YYYY-MM-DD"
+                  />
+                </View>
+
+                <View style={styles.formGroup}>
+                  <Text style={styles.formLabel}>Check-out Date *</Text>
+                  <TextInput
+                    style={styles.formInput}
+                    value={newBooking.check_out}
+                    onChangeText={(text) => setNewBooking({ ...newBooking, check_out: text })}
+                    placeholder="YYYY-MM-DD"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.formRow}>
+                <View style={styles.formGroup}>
+                  <Text style={styles.formLabel}>Adults</Text>
+                  <TextInput
+                    style={styles.formInput}
+                    value={newBooking.adults.toString()}
+                    onChangeText={(text) => setNewBooking({ ...newBooking, adults: Number(text) || 1 })}
+                    placeholder="1"
+                    keyboardType="numeric"
+                  />
+                </View>
+
+                <View style={styles.formGroup}>
+                  <Text style={styles.formLabel}>Children</Text>
+                  <TextInput
+                    style={styles.formInput}
+                    value={newBooking.children.toString()}
+                    onChangeText={(text) => setNewBooking({ ...newBooking, children: Number(text) || 0 })}
+                    placeholder="0"
+                    keyboardType="numeric"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Total Amount</Text>
+                <TextInput
+                  style={styles.formInput}
+                  value={newBooking.total_amount.toString()}
+                  onChangeText={(text) => setNewBooking({ ...newBooking, total_amount: Number(text) || 0 })}
+                  placeholder="Enter total amount"
+                  keyboardType="numeric"
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Special Requests</Text>
+                <TextInput
+                  style={[styles.formInput, styles.textArea]}
+                  value={newBooking.special_requests}
+                  onChangeText={(text) => setNewBooking({ ...newBooking, special_requests: text })}
+                  placeholder="Any special requests..."
+                  multiline
+                  numberOfLines={3}
+                />
+              </View>
               <TouchableOpacity style={styles.createButton} onPress={createBooking}>
                 <Text style={styles.createButtonText}>Create Booking</Text>
               </TouchableOpacity>
@@ -782,5 +886,50 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
+  },
+  formRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top',
+  },
+  roomSelector: {
+    flexDirection: 'row',
+  },
+  roomOption: {
+    marginRight: 12,
+    padding: 12,
+    backgroundColor: '#f8fafc',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    minWidth: 120,
+  },
+  roomOptionActive: {
+    backgroundColor: '#2563eb',
+    borderColor: '#2563eb',
+  },
+  roomOptionText: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: '#64748b',
+  },
+  roomOptionTextActive: {
+    color: 'white',
+  },
+  roomOptionType: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    color: '#64748b',
+    marginTop: 4,
+    textTransform: 'capitalize',
+  },
+  roomOptionPrice: {
+    fontSize: 10,
+    fontFamily: 'Inter-Regular',
+    color: '#94a3b8',
+    marginTop: 2,
   },
 });

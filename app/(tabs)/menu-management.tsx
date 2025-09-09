@@ -16,6 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
+import { ExcelImporter } from '@/components/ExcelImporter';
 import { ChefHat, Plus, Search, CreditCard as Edit, Trash2, Wine, Coffee, Utensils, Star } from 'lucide-react-native';
 
 type MenuItem = Database['public']['Tables']['menu_items']['Row'];
@@ -30,6 +31,7 @@ export default function MenuManagement() {
   const [newItemModal, setNewItemModal] = useState(false);
   const [editItemModal, setEditItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [importModal, setImportModal] = useState(false);
 
   const [newItem, setNewItem] = useState({
     name: '',
@@ -269,6 +271,17 @@ export default function MenuManagement() {
                 style={styles.addButtonGradient}
               >
                 <Plus size={20} color="white" />
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.importButton}
+              onPress={() => setImportModal(true)}
+            >
+              <LinearGradient
+                colors={['#7c3aed', '#8b5cf6']}
+                style={styles.addButtonGradient}
+              >
+                <Text style={styles.importButtonText}>📊</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -616,6 +629,14 @@ export default function MenuManagement() {
           </View>
         </View>
       </Modal>
+
+      {/* Excel Import Modal */}
+      <ExcelImporter
+        visible={importModal}
+        onClose={() => setImportModal(false)}
+        importType="menu"
+        onImportComplete={loadMenuItems}
+      />
     </SafeAreaView>
   );
 }
@@ -700,6 +721,17 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  importButton: {
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  importButtonText: {
+    fontSize: 20,
   },
   searchContainer: {
     padding: 20,
