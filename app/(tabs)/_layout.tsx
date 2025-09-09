@@ -106,6 +106,13 @@ export default function TabLayout() {
           { name: 'analytics', title: 'Analytics', icon: BarChart3 },
         ];
       
+      case 'store_keeper':
+        return [
+          ...commonTabs,
+          { name: 'store-management', title: 'Store Management', icon: Package },
+          { name: 'inventory', title: 'Inventory', icon: Package },
+        ];
+      
       default:
         return commonTabs;
     }

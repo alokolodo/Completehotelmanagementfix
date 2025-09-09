@@ -91,6 +91,7 @@ export default function Auth() {
     { key: 'housekeeping', label: 'Housekeeping' },
     { key: 'maintenance', label: 'Maintenance' },
     { key: 'accountant', label: 'Accountant' },
+    { key: 'store_keeper', label: 'Store Keeper' },
   ];
 
   return (

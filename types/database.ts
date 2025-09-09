@@ -6,7 +6,7 @@ export interface Database {
           id: string;
           email: string;
           full_name: string;
-          role: 'admin' | 'manager' | 'receptionist' | 'kitchen_staff' | 'bar_staff' | 'housekeeping' | 'maintenance' | 'accountant';
+          role: 'admin' | 'manager' | 'receptionist' | 'kitchen_staff' | 'bar_staff' | 'housekeeping' | 'maintenance' | 'accountant' | 'store_keeper';
           phone?: string;
           avatar_url?: string;
           is_active: boolean;
@@ -17,14 +17,14 @@ export interface Database {
           id: string;
           email: string;
           full_name: string;
-          role: 'admin' | 'manager' | 'receptionist' | 'kitchen_staff' | 'bar_staff' | 'housekeeping' | 'maintenance' | 'accountant';
+          role: 'admin' | 'manager' | 'receptionist' | 'kitchen_staff' | 'bar_staff' | 'housekeeping' | 'maintenance' | 'accountant' | 'store_keeper';
           phone?: string;
           avatar_url?: string;
           is_active?: boolean;
         };
         Update: {
           full_name?: string;
-          role?: 'admin' | 'manager' | 'receptionist' | 'kitchen_staff' | 'bar_staff' | 'housekeeping' | 'maintenance' | 'accountant';
+          role?: 'admin' | 'manager' | 'receptionist' | 'kitchen_staff' | 'bar_staff' | 'housekeeping' | 'maintenance' | 'accountant' | 'store_keeper';
           phone?: string;
           avatar_url?: string;
           is_active?: boolean;

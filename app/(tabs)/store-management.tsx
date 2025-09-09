@@ -9,12 +9,14 @@ import {
   Alert,
   Modal,
   RefreshControl,
+  Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
+import { ExcelImporter } from '@/components/ExcelImporter';
 import { Package, Plus, Search, TrendingUp, TrendingDown, ChefHat, Wine, TriangleAlert as AlertTriangle } from 'lucide-react-native';
 
 type InventoryItem = Database['public']['Tables']['inventory']['Row'];
@@ -29,6 +31,22 @@ export default function StoreManagement() {
   const [restockModal, setRestockModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [restockQuantity, setRestockQuantity] = useState('');
+  const [importModal, setImportModal] = useState(false);
+  const [newItemModal, setNewItemModal] = useState(false);
+  const [newItem, setNewItem] = useState({
+    item_name: '',
+    category: 'food' as InventoryItem['category'],
+    subcategory: '',
+    current_stock: 0,
+    minimum_stock: 0,
+    maximum_stock: 100,
+    unit: 'pieces',
+    unit_cost: 0,
+    supplier: '',
+    supplier_contact: '',
+    storage_location: '',
+    is_perishable: false,
+  });
 
   useEffect(() => {
     if (user?.role === 'admin' || user?.role === 'manager' || user?.role === 'kitchen_staff' || user?.role === 'bar_staff') {
@@ -88,6 +106,45 @@ export default function StoreManagement() {
     } catch (error) {
       console.error('Error restocking item:', error);
       Alert.alert('Error', 'Failed to restock item');
+    }
+  };
+
+  const createInventoryItem = async () => {
+    if (!newItem.item_name || !newItem.supplier || newItem.unit_cost <= 0) {
+      Alert.alert('Error', 'Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const totalValue = newItem.current_stock * newItem.unit_cost;
+      
+      await db.insert<InventoryItem>('inventory', {
+        ...newItem,
+        total_value: totalValue,
+        last_restocked: new Date().toISOString(),
+        reorder_point: newItem.minimum_stock,
+      });
+
+      Alert.alert('Success', 'Inventory item added successfully');
+      setNewItemModal(false);
+      setNewItem({
+        item_name: '',
+        category: 'food',
+        subcategory: '',
+        current_stock: 0,
+        minimum_stock: 0,
+        maximum_stock: 100,
+        unit: 'pieces',
+        unit_cost: 0,
+        supplier: '',
+        supplier_contact: '',
+        storage_location: '',
+        is_perishable: false,
+      });
+      loadInventory();
+    } catch (error) {
+      console.error('Error creating inventory item:', error);
+      Alert.alert('Error', 'Failed to create inventory item');
     }
   };
 
@@ -170,6 +227,30 @@ export default function StoreManagement() {
               </View>
             </View>
           </View>
+        </View>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => setNewItemModal(true)}
+          >
+            <LinearGradient
+              colors={['#10b981', '#059669']}
+              style={styles.addButtonGradient}
+            >
+              <Plus size={20} color="white" />
+            </LinearGradient>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.importButton}
+            onPress={() => setImportModal(true)}
+          >
+            <LinearGradient
+              colors={['#7c3aed', '#8b5cf6']}
+              style={styles.addButtonGradient}
+            >
+              <Text style={styles.importButtonText}>📊</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       </LinearGradient>
 
@@ -447,6 +528,171 @@ export default function StoreManagement() {
           </View>
         </View>
       </Modal>
+
+      {/* New Item Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={newItemModal}
+        onRequestClose={() => setNewItemModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Add New Inventory Item</Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setNewItemModal(false)}
+              >
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalBody}>
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Item Name *</Text>
+                <TextInput
+                  style={styles.formInput}
+                  value={newItem.item_name}
+                  onChangeText={(text) => setNewItem({ ...newItem, item_name: text })}
+                  placeholder="Enter item name"
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Category *</Text>
+                <ScrollView horizontal style={styles.categorySelector}>
+                  {['food', 'beverage', 'alcohol', 'amenity', 'cleaning', 'maintenance', 'office', 'kitchen_equipment', 'bar_equipment'].map((category) => (
+                    <TouchableOpacity
+                      key={category}
+                      style={[
+                        styles.categoryOption,
+                        newItem.category === category && styles.categoryOptionActive,
+                      ]}
+                      onPress={() => setNewItem({ ...newItem, category: category as any })}
+                    >
+                      <Text style={[
+                        styles.categoryOptionText,
+                        newItem.category === category && styles.categoryOptionTextActive,
+                      ]}>
+                        {category.replace('_', ' ').charAt(0).toUpperCase() + category.replace('_', ' ').slice(1)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Storage Location *</Text>
+                <TextInput
+                  style={styles.formInput}
+                  value={newItem.storage_location}
+                  onChangeText={(text) => setNewItem({ ...newItem, storage_location: text })}
+                  placeholder="e.g., Kitchen Pantry, Bar Storage, Walk-in Cooler"
+                />
+              </View>
+
+              <View style={styles.formRow}>
+                <View style={styles.formGroup}>
+                  <Text style={styles.formLabel}>Current Stock</Text>
+                  <TextInput
+                    style={styles.formInput}
+                    value={newItem.current_stock.toString()}
+                    onChangeText={(text) => setNewItem({ ...newItem, current_stock: Number(text) || 0 })}
+                    placeholder="0"
+                    keyboardType="numeric"
+                  />
+                </View>
+
+                <View style={styles.formGroup}>
+                  <Text style={styles.formLabel}>Unit</Text>
+                  <TextInput
+                    style={styles.formInput}
+                    value={newItem.unit}
+                    onChangeText={(text) => setNewItem({ ...newItem, unit: text })}
+                    placeholder="pieces, kg, liters"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.formRow}>
+                <View style={styles.formGroup}>
+                  <Text style={styles.formLabel}>Minimum Stock</Text>
+                  <TextInput
+                    style={styles.formInput}
+                    value={newItem.minimum_stock.toString()}
+                    onChangeText={(text) => setNewItem({ ...newItem, minimum_stock: Number(text) || 0 })}
+                    placeholder="0"
+                    keyboardType="numeric"
+                  />
+                </View>
+
+                <View style={styles.formGroup}>
+                  <Text style={styles.formLabel}>Maximum Stock</Text>
+                  <TextInput
+                    style={styles.formInput}
+                    value={newItem.maximum_stock.toString()}
+                    onChangeText={(text) => setNewItem({ ...newItem, maximum_stock: Number(text) || 100 })}
+                    placeholder="100"
+                    keyboardType="numeric"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Unit Cost *</Text>
+                <TextInput
+                  style={styles.formInput}
+                  value={newItem.unit_cost.toString()}
+                  onChangeText={(text) => setNewItem({ ...newItem, unit_cost: Number(text) || 0 })}
+                  placeholder="0.00"
+                  keyboardType="numeric"
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Supplier *</Text>
+                <TextInput
+                  style={styles.formInput}
+                  value={newItem.supplier}
+                  onChangeText={(text) => setNewItem({ ...newItem, supplier: text })}
+                  placeholder="Enter supplier name"
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Supplier Contact</Text>
+                <TextInput
+                  style={styles.formInput}
+                  value={newItem.supplier_contact}
+                  onChangeText={(text) => setNewItem({ ...newItem, supplier_contact: text })}
+                  placeholder="Phone or email"
+                />
+              </View>
+
+              <View style={styles.switchRow}>
+                <Text style={styles.switchLabel}>Perishable Item</Text>
+                <Switch
+                  value={newItem.is_perishable}
+                  onValueChange={(value) => setNewItem({ ...newItem, is_perishable: value })}
+                />
+              </View>
+
+              <TouchableOpacity style={styles.createButton} onPress={createInventoryItem}>
+                <Text style={styles.createButtonText}>Add to Inventory</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Excel Import Modal */}
+      <ExcelImporter
+        visible={importModal}
+        onClose={() => setImportModal(false)}
+        importType="inventory"
+        onImportComplete={loadInventory}
+      />
     </SafeAreaView>
   );
 }
@@ -513,6 +759,38 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: 'rgba(255, 255, 255, 0.8)',
     marginTop: 4,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  addButton: {
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  addButtonGradient: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  importButton: {
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+    marginLeft: 12,
+  },
+  importButtonText: {
+    fontSize: 20,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -808,6 +1086,10 @@ const styles = StyleSheet.create({
   formGroup: {
     marginBottom: 16,
   },
+  formRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
   formLabel: {
     fontSize: 14,
     fontFamily: 'Inter-SemiBold',
@@ -822,6 +1104,54 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter-Regular',
     backgroundColor: '#fafafa',
+  },
+  categorySelector: {
+    flexDirection: 'row',
+  },
+  categoryOption: {
+    marginRight: 8,
+    padding: 8,
+    backgroundColor: '#f8fafc',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    minWidth: 80,
+  },
+  categoryOptionActive: {
+    backgroundColor: '#7c3aed',
+    borderColor: '#7c3aed',
+  },
+  categoryOptionText: {
+    fontSize: 12,
+    fontFamily: 'Inter-SemiBold',
+    color: '#64748b',
+    textAlign: 'center',
+  },
+  categoryOptionTextActive: {
+    color: 'white',
+  },
+  switchRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  switchLabel: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: '#374151',
+  },
+  createButton: {
+    backgroundColor: '#7c3aed',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  createButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontFamily: 'Inter-SemiBold',
   },
   quickRestockButtons: {
     flexDirection: 'row',
