@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '@/lib/database';
 import { Database } from '@/types/database';
+import { BookingConfirmation } from '@/components/BookingConfirmation';
 import { Calendar, Search, Plus, User, MapPin, CreditCard, Clock, Phone, Mail, Filter } from 'lucide-react-native';
 
 type Booking = Database['public']['Tables']['bookings']['Row'];
@@ -28,6 +29,8 @@ export default function Bookings() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [newBookingModal, setNewBookingModal] = useState(false);
+  const [confirmationModal, setConfirmationModal] = useState(false);
+  const [confirmedBooking, setConfirmedBooking] = useState<Booking | null>(null);
 
   const [newBooking, setNewBooking] = useState({
     guest_name: '',
@@ -50,15 +53,22 @@ export default function Bookings() {
 
   const loadData = async () => {
     try {
+      setLoading(true);
+      console.log('Loading bookings and rooms data...');
+      
       const [bookingsData, roomsData] = await Promise.all([
         db.select<Booking>('bookings'),
         db.select<Room>('rooms')
       ]);
+      
+      console.log('Loaded bookings:', bookingsData.length);
+      console.log('Loaded rooms:', roomsData.length);
+      
       setBookings(bookingsData);
       setRooms(roomsData);
     } catch (error) {
       console.error('Error loading data:', error);
-      Alert.alert('Error', 'Failed to load bookings data');
+      Alert.alert('Error', `Failed to load bookings data: ${error.message || error}`);
     } finally {
       setLoading(false);
     }
@@ -109,18 +119,32 @@ export default function Bookings() {
     }
 
     try {
-      const booking = await db.insert<Booking>('bookings', {
+      setLoading(true);
+      
+      // Create booking with proper data structure
+      const bookingData = {
         ...newBooking,
         payment_status: 'pending',
         booking_status: 'confirmed',
         checkout_time: '12:00',
-      });
+      };
+      
+      console.log('Creating booking with data:', bookingData);
+      
+      const booking = await db.insert<Booking>('bookings', bookingData);
+      
+      console.log('Booking created successfully:', booking);
 
       // Update room status to reserved
       await db.update<Room>('rooms', newBooking.room_id, { status: 'reserved' });
+      
+      console.log('Room status updated to reserved');
 
-      Alert.alert('Success', 'Booking created successfully');
+      // Show confirmation modal instead of alert
+      setConfirmedBooking(booking);
       setNewBookingModal(false);
+      setConfirmationModal(true);
+      
       setNewBooking({
         guest_name: '',
         guest_email: '',
@@ -138,13 +162,21 @@ export default function Bookings() {
       loadData();
     } catch (error) {
       console.error('Error creating booking:', error);
-      Alert.alert('Error', 'Failed to create booking');
+      Alert.alert('Error', `Failed to create booking: ${error.message || error}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   const updateBookingStatus = async (bookingId: string, status: Booking['booking_status']) => {
     try {
-      await db.update<Booking>('bookings', bookingId, { booking_status: status });
+      setLoading(true);
+      
+      console.log('Updating booking status:', bookingId, status);
+      
+      const updatedBooking = await db.update<Booking>('bookings', bookingId, { booking_status: status });
+      
+      console.log('Booking status updated:', updatedBooking);
       
       // Update room status based on booking status
       const booking = bookings.find(b => b.id === bookingId);
@@ -164,6 +196,8 @@ export default function Bookings() {
             roomStatus = 'reserved';
             break;
         }
+        
+        console.log('Updating room status to:', roomStatus);
         await db.update<Room>('rooms', booking.room_id, { status: roomStatus });
       }
 
@@ -174,7 +208,9 @@ export default function Bookings() {
       Alert.alert('Success', 'Booking status updated');
     } catch (error) {
       console.error('Error updating booking status:', error);
-      Alert.alert('Error', 'Failed to update booking status');
+      Alert.alert('Error', `Failed to update booking status: ${error.message || error}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -627,12 +663,31 @@ export default function Bookings() {
                 />
               </View>
               <TouchableOpacity style={styles.createButton} onPress={createBooking}>
-                <Text style={styles.createButtonText}>Create Booking</Text>
+                <Text style={styles.createButtonText}>
+                  {loading ? 'Creating...' : 'Create Booking'}
+                </Text>
               </TouchableOpacity>
             </ScrollView>
           </View>
         </View>
       </Modal>
+
+      {/* Booking Confirmation Modal */}
+      <BookingConfirmation
+        visible={confirmationModal}
+        booking={confirmedBooking}
+        room={confirmedBooking ? rooms.find(r => r.id === confirmedBooking.room_id) || null : null}
+        onClose={() => {
+          setConfirmationModal(false);
+          setConfirmedBooking(null);
+        }}
+        onPrint={() => {
+          Alert.alert('Print', 'Print functionality would be implemented here');
+        }}
+        onEmail={() => {
+          Alert.alert('Email', 'Email confirmation functionality would be implemented here');
+        }}
+      />
     </SafeAreaView>
   );
 }
