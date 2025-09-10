@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'expo-router';
+import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
 import { Settings as SettingsIcon, User, Bell, Shield, Database, Wifi, Moon, Globe, CircleHelp as HelpCircle, LogOut, Save, Star, Sparkles } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
@@ -72,16 +73,20 @@ export default function Settings() {
   }, []);
 
   const handleSaveSettings = async () => {
-    // Update hotel name in the system
-    if (hotelSettings.hotelName) {
-      const saved = await saveHotelSettings();
-      if (saved) {
-        Alert.alert('Success', 'Settings saved successfully. Changes will be reflected across the system.');
-      } else {
-        Alert.alert('Error', 'Failed to save settings. Please try again.');
-      }
-    } else {
-      Alert.alert('Error', 'Hotel name cannot be empty');
+    try {
+      // Save hotel settings to AsyncStorage
+      await AsyncStorage.setItem('hotel_settings', JSON.stringify(hotelSettings));
+      
+      // Save notification settings
+      await AsyncStorage.setItem('notification_settings', JSON.stringify(notificationSettings));
+      
+      // Save system settings
+      await AsyncStorage.setItem('system_settings', JSON.stringify(systemSettings));
+      
+      Alert.alert('Success', 'Settings saved successfully! Changes are now active across the system.');
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      Alert.alert('Error', 'Failed to save settings. Please try again.');
     }
   };
 
@@ -350,39 +355,129 @@ export default function Settings() {
           </View>
         </View>
 
-        {/* Data Management */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Database size={20} color="#1e3a8a" />
-            <Text style={styles.sectionTitle}>Data Management</Text>
-          </View>
-
-          <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.actionButton} onPress={handleExportData}>
-              <Database size={16} color="#1e3a8a" />
-              <Text style={styles.actionButtonText}>Export Data</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.actionButton} onPress={handleImportData}>
-              <Database size={16} color="#1e3a8a" />
-              <Text style={styles.actionButtonText}>Import Data</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={styles.actionButton} 
-              onPress={() => Alert.alert('Info', 'Database cleanup functionality would be implemented here')}
-            >
-              <Database size={16} color="#1e3a8a" />
-              <Text style={styles.actionButtonText}>Clean Database</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Help & Support */}
+        {/* Help & Support with Template Downloads */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <HelpCircle size={20} color="#1e3a8a" />
             <Text style={styles.sectionTitle}>Help & Support</Text>
+          </View>
+
+          <View style={styles.helpSection}>
+            <Text style={styles.helpSectionTitle}>📊 Excel Templates</Text>
+            <Text style={styles.helpDescription}>
+              Download professional Excel templates for importing data into the system. 
+              Each template includes sample data and detailed instructions.
+            </Text>
+            
+            <View style={styles.templateGrid}>
+              <View style={styles.templateCategory}>
+                <Text style={styles.templateCategoryTitle}>🏨 Hotel Operations</Text>
+                <View style={styles.templateButtons}>
+                  <ExcelTemplateDownloader
+                    templateType="rooms"
+                    buttonText="Rooms & Amenities"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Hotel Rooms Setup Template saved to your chosen location!');
+                    }}
+                  />
+                  <ExcelTemplateDownloader
+                    templateType="bookings"
+                    buttonText="Guest Bookings"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Guest Bookings Template saved to your chosen location!');
+                    }}
+                  />
+                  <ExcelTemplateDownloader
+                    templateType="halls"
+                    buttonText="Event Halls"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Event Halls Template saved to your chosen location!');
+                    }}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.templateCategory}>
+                <Text style={styles.templateCategoryTitle}>🍽️ Food & Beverage</Text>
+                <View style={styles.templateButtons}>
+                  <ExcelTemplateDownloader
+                    templateType="menu"
+                    buttonText="Menu Items"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Menu Items Template saved to your chosen location!');
+                    }}
+                  />
+                  <ExcelTemplateDownloader
+                    templateType="recipes"
+                    buttonText="Kitchen Recipes"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Kitchen Recipes Template saved to your chosen location!');
+                    }}
+                  />
+                  <ExcelTemplateDownloader
+                    templateType="bar"
+                    buttonText="Bar & Cocktails"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Bar & Cocktails Template saved to your chosen location!');
+                    }}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.templateCategory}>
+                <Text style={styles.templateCategoryTitle}>📦 Inventory & Operations</Text>
+                <View style={styles.templateButtons}>
+                  <ExcelTemplateDownloader
+                    templateType="inventory"
+                    buttonText="Inventory Items"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Inventory Template saved to your chosen location!');
+                    }}
+                  />
+                  <ExcelTemplateDownloader
+                    templateType="maintenance"
+                    buttonText="Maintenance Requests"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Maintenance Template saved to your chosen location!');
+                    }}
+                  />
+                  <ExcelTemplateDownloader
+                    templateType="staff"
+                    buttonText="Staff Management"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Staff Management Template saved to your chosen location!');
+                    }}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.templateCategory}>
+                <Text style={styles.templateCategoryTitle}>💰 Financial & Analytics</Text>
+                <View style={styles.templateButtons}>
+                  <ExcelTemplateDownloader
+                    templateType="financial"
+                    buttonText="Financial Data"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Financial Template saved to your chosen location!');
+                    }}
+                  />
+                  <ExcelTemplateDownloader
+                    templateType="analytics"
+                    buttonText="Analytics Data"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Analytics Template saved to your chosen location!');
+                    }}
+                  />
+                  <ExcelTemplateDownloader
+                    templateType="all"
+                    buttonText="Complete System"
+                    onDownloadComplete={() => {
+                      Alert.alert('Downloaded', 'Complete System Template saved to your chosen location!');
+                    }}
+                  />
+                </View>
+              </View>
+            </View>
           </View>
 
           <View style={styles.actionButtons}>
@@ -408,6 +503,34 @@ export default function Settings() {
             >
               <HelpCircle size={16} color="#1e3a8a" />
               <Text style={styles.actionButtonText}>About</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Data Management */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Database size={20} color="#1e3a8a" />
+            <Text style={styles.sectionTitle}>Data Management</Text>
+          </View>
+
+          <View style={styles.actionButtons}>
+            <TouchableOpacity style={styles.actionButton} onPress={handleExportData}>
+              <Database size={16} color="#1e3a8a" />
+              <Text style={styles.actionButtonText}>Export Data</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.actionButton} onPress={handleImportData}>
+              <Database size={16} color="#1e3a8a" />
+              <Text style={styles.actionButtonText}>Import Data</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.actionButton} 
+              onPress={() => Alert.alert('Info', 'Database cleanup functionality would be implemented here')}
+            >
+              <Database size={16} color="#1e3a8a" />
+              <Text style={styles.actionButtonText}>Clean Database</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -651,6 +774,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter-Regular',
     color: '#1e293b',
+  },
+  helpSection: {
+    marginBottom: 24,
+  },
+  helpSectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 8,
+  },
+  helpDescription: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: '#64748b',
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  templateGrid: {
+    gap: 24,
+  },
+  templateCategory: {
+    backgroundColor: '#f8fafc',
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#1e3a8a',
+  },
+  templateCategoryTitle: {
+    fontSize: 16,
+    fontFamily: 'Inter-Bold',
+    color: '#1e293b',
+    marginBottom: 12,
+  },
+  templateButtons: {
+    gap: 8,
   },
   signOutButton: {
     flexDirection: 'row',
