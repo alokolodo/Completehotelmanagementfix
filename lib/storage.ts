@@ -1,5 +1,41 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Hotel settings management
+export const saveHotelSettings = async (settings: any): Promise<boolean> => {
+  try {
+    await AsyncStorage.setItem('hotel_settings', JSON.stringify(settings));
+    
+    // Also update any global state or context if needed
+    // This could trigger updates across the app
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to save hotel settings:', error);
+    return false;
+  }
+};
+
+export const loadHotelSettings = async (): Promise<any> => {
+  try {
+    const settings = await AsyncStorage.getItem('hotel_settings');
+    return settings ? JSON.parse(settings) : {
+      hotelName: 'Grand Hotel',
+      address: '123 Main Street, City, State 12345',
+      phone: '+1 (555) 123-4567',
+      email: 'info@grandhotel.com',
+      website: 'www.grandhotel.com',
+      checkInTime: '15:00',
+      checkOutTime: '11:00',
+      currency: 'USD',
+      timezone: 'America/New_York',
+      taxRate: 8.5,
+    };
+  } catch (error) {
+    console.error('Failed to load hotel settings:', error);
+    return null;
+  }
+};
+
 // Enhanced storage with better error handling and performance
 export class CacheManager {
   private static instance: CacheManager;

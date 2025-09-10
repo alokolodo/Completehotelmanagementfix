@@ -3,7 +3,7 @@ import { useRouter, usePathname } from 'expo-router';
 import { useAuthContext } from '@/contexts/AuthContext';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { loadHotelSettings } from '@/lib/storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { 
   LayoutDashboard, 
@@ -29,18 +29,28 @@ export default function TabLayout() {
   const router = useRouter();
   const pathname = usePathname();
   const [hotelName, setHotelName] = useState('Grand Hotel');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     loadHotelName();
+    
+    // Listen for settings changes
+    const interval = setInterval(async () => {
+      const settings = await loadHotelSettings();
+      const newHotelName = settings?.hotelName || 'Grand Hotel';
+      if (newHotelName !== hotelName) {
+        setHotelName(newHotelName);
+        setRefreshKey(prev => prev + 1);
+      }
+    }, 1000); // Check every second for changes
+    
+    return () => clearInterval(interval);
   }, []);
 
   const loadHotelName = async () => {
     try {
-      const savedSettings = await AsyncStorage.getItem('hotel_settings');
-      if (savedSettings) {
-        const settings = JSON.parse(savedSettings);
-        setHotelName(settings.hotelName || 'Grand Hotel');
-      }
+      const settings = await loadHotelSettings();
+      setHotelName(settings?.hotelName || 'Grand Hotel');
     } catch (error) {
       console.error('Failed to load hotel name:', error);
       setHotelName('Grand Hotel');
@@ -149,7 +159,7 @@ export default function TabLayout() {
           style={styles.sidebarGradient}
         >
           {/* Header */}
-          <View style={styles.sidebarHeader}>
+          <View key={refreshKey} style={styles.sidebarHeader}>
             <LinearGradient
               colors={['#2563eb', '#3b82f6']}
               style={styles.logoContainer}
