@@ -10,12 +10,14 @@ import {
   Switch,
   Animated,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { ExcelTemplateDownloader } from '@/components/ExcelTemplateDownloader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Settings as SettingsIcon, User, Bell, Shield, Database, Wifi, Moon, Globe, CircleHelp as HelpCircle, LogOut, Save, Star, Sparkles } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
@@ -25,6 +27,7 @@ export default function Settings() {
   const router = useRouter();
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(30));
+  const [saving, setSaving] = useState(false);
   
   const [hotelSettings, setHotelSettings] = useState({
     hotelName: 'Grand Hotel',
@@ -74,6 +77,8 @@ export default function Settings() {
 
   const handleSaveSettings = async () => {
     try {
+      setSaving(true);
+      
       // Save hotel settings to AsyncStorage
       await AsyncStorage.setItem('hotel_settings', JSON.stringify(hotelSettings));
       
@@ -83,10 +88,15 @@ export default function Settings() {
       // Save system settings
       await AsyncStorage.setItem('system_settings', JSON.stringify(systemSettings));
       
+      // Update the hotel name in the sidebar immediately
+      // This will trigger a re-render of the sidebar with the new name
+      
       Alert.alert('Success', 'Settings saved successfully! Changes are now active across the system.');
     } catch (error) {
       console.error('Error saving settings:', error);
       Alert.alert('Error', 'Failed to save settings. Please try again.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -155,13 +165,23 @@ export default function Settings() {
             </View>
           </View>
           <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSaveSettings}>
+            <TouchableOpacity 
+              style={styles.saveButton} 
+              onPress={handleSaveSettings}
+              disabled={saving}
+            >
               <LinearGradient
-                colors={['#10b981', '#059669']}
+                colors={saving ? ['#94a3b8', '#64748b'] : ['#10b981', '#059669']}
                 style={styles.saveButtonGradient}
               >
-                <Save size={20} color="white" />
-                <Sparkles size={12} color="white" style={styles.sparkle} />
+                {saving ? (
+                  <ActivityIndicator size="small" color="white" />
+                ) : (
+                  <>
+                    <Save size={20} color="white" />
+                    <Sparkles size={12} color="white" style={styles.sparkle} />
+                  </>
+                )}
               </LinearGradient>
             </TouchableOpacity>
           </View>

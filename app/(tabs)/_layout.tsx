@@ -29,9 +29,22 @@ export default function TabLayout() {
   const router = useRouter();
   const pathname = usePathname();
   const [hotelName, setHotelName] = useState('Grand Hotel');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     loadHotelName();
+    
+    // Listen for settings changes
+    const interval = setInterval(async () => {
+      const settings = await loadHotelSettings();
+      const newHotelName = settings?.hotelName || 'Grand Hotel';
+      if (newHotelName !== hotelName) {
+        setHotelName(newHotelName);
+        setRefreshKey(prev => prev + 1);
+      }
+    }, 1000); // Check every second for changes
+    
+    return () => clearInterval(interval);
   }, []);
 
   const loadHotelName = async () => {
@@ -146,7 +159,7 @@ export default function TabLayout() {
           style={styles.sidebarGradient}
         >
           {/* Header */}
-          <View style={styles.sidebarHeader}>
+          <View key={refreshKey} style={styles.sidebarHeader}>
             <LinearGradient
               colors={['#2563eb', '#3b82f6']}
               style={styles.logoContainer}
