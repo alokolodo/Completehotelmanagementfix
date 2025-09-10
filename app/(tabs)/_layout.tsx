@@ -3,7 +3,7 @@ import { useRouter, usePathname } from 'expo-router';
 import { useAuthContext } from '@/contexts/AuthContext';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { loadHotelSettings } from '@/lib/storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { 
   LayoutDashboard, 
@@ -36,11 +36,8 @@ export default function TabLayout() {
 
   const loadHotelName = async () => {
     try {
-      const savedSettings = await AsyncStorage.getItem('hotel_settings');
-      if (savedSettings) {
-        const settings = JSON.parse(savedSettings);
-        setHotelName(settings.hotelName || 'Grand Hotel');
-      }
+      const settings = await loadHotelSettings();
+      setHotelName(settings?.hotelName || 'Grand Hotel');
     } catch (error) {
       console.error('Failed to load hotel name:', error);
       setHotelName('Grand Hotel');
